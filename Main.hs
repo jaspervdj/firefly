@@ -29,12 +29,14 @@ main = do
 --------------------------------------------------------------------------------
 loop :: IO ()
 loop = do
+    Input.flush
+    quit     <- Input.quit
+    esc      <- Input.keyDown Keys.escape
+    mousePos <- Input.mousePosition
+
     Video.frame $ do
-        Video.line [Vector 100 100, Vector 500 100, Vector 500 500]
+        Video.line [Vector 100 100, Vector 500 100, fromInts mousePos]
 
     threadDelay 1000
 
-    Input.flush
-    quit <- Input.isQuit
-    esc  <- Input.isKeyDown Keys.escape
     if quit || esc then return () else loop

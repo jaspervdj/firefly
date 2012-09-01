@@ -3,8 +3,9 @@
 
 void input_flush(void);
 
-int input_isQuit(void);
-int input_isKeyDown(int key);
-
+int input_quit(void);
+int input_keyDown(int key);
+int input_mouseX(void);
+int input_mouseY(void);
 
 #endif

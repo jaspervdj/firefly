@@ -14,7 +14,6 @@ void video_setMode(int width, int height) {
     glEnable(GL_TEXTURE_2D);
     glClearColor(0.0f, 0.0f, 0.0f, 0.0f);
     glViewport(0, 0, width, height);
-    glClear(GL_COLOR_BUFFER_BIT);
      
     glMatrixMode(GL_PROJECTION);
     glLoadIdentity();
@@ -36,6 +35,7 @@ int video_screenHeight(void) {
 
 
 void video_startFrame(void) {
+    glClear(GL_COLOR_BUFFER_BIT);
     glLoadIdentity();
 }
 

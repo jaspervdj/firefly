@@ -3,6 +3,14 @@ module Firefly.Vector
     ( Vector (..)
     , (.+.)
     , (.-.)
+    , neg
+    
+    , len
+
+    , fromPolar
+    , toPolar
+    , fromInts
+    , toInts
     ) where
 
 
@@ -31,3 +39,33 @@ instance Monoid Vector where
 --------------------------------------------------------------------------------
 (.-.) :: Vector -> Vector -> Vector
 (Vector x1 y1) .-. (Vector x2 y2) = Vector (x1 - x2) (y1 - y2)
+
+
+--------------------------------------------------------------------------------
+neg :: Vector -> Vector
+neg (Vector x y) = Vector (-x) (-y)
+
+
+--------------------------------------------------------------------------------
+len :: Vector -> Double
+len (Vector x y) = sqrt $ x * x + y * y
+
+
+--------------------------------------------------------------------------------
+fromPolar :: Double -> Double -> Vector
+fromPolar r th = Vector (r * cos th) (r * sin th)
+
+
+--------------------------------------------------------------------------------
+toPolar :: Vector -> (Double, Double)
+toPolar v@(Vector x y) = (len v, atan2 y x)
+
+
+--------------------------------------------------------------------------------
+fromInts :: (Int, Int) -> Vector
+fromInts (x, y) = Vector (fromIntegral x) (fromIntegral y)
+
+
+--------------------------------------------------------------------------------
+toInts :: Vector -> (Int, Int)
+toInts (Vector x y) = (round x, round y)
