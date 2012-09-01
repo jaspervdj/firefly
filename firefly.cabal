@@ -1,0 +1,45 @@
+Name:     firefly
+Version:  0.0.0.1
+Synopsis: Lightweight, fast and easy 2D game library 
+
+Description:         
+  Lightweight, fast and easy 2D game library 
+
+License:       BSD3
+License-file:  LICENSE
+Author:        Jasper Van der Jeugt <m@jaspervdj.be>
+Maintainer:    Jasper Van der Jeugt <m@jaspervdj.be>
+Copyright:     2012 Jasper Van der Jeugt
+Category:      Game
+Build-type:    Simple
+Cabal-version: >= 1.8
+
+Library
+  Cc-options:     -DDEBUG -Wall
+  Ghc-options:    -Wall
+  Hs-source-dirs: src
+  Include-dirs:   cbits
+
+  C-sources:
+    cbits/engine.c
+    cbits/video.c
+
+  Exposed-modules:     
+    Firefly.Engine
+    Firefly.Vector
+    Firefly.Video
+
+  Build-depends:
+    base >= 4 && < 5
+
+  Pkgconfig-depends:
+    sdl >= 1.2,
+    gl
+
+Executable firefly-test
+  Cpp-options: -DDEBUG
+  Main-is:     Main.hs
+
+  Build-depends:
+    base    >= 4   && < 5,
+    firefly >= 0.0 && < 0.1
