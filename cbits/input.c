@@ -4,7 +4,7 @@
 #include "input.h"
 
 /* Globals, but trust me, it's okay. */
-int input_quit = 0;
+int inputQuit = 0;
 
 void flush(void) {
     SDL_Event event;
@@ -13,7 +13,7 @@ void flush(void) {
             case SDL_QUIT:
 #ifdef DEBUG
                 printf("input/flush(): quit received\n");
-                input_quit = 1;
+                inputQuit = 1;
 #endif
                 break;
             default:
@@ -23,5 +23,5 @@ void flush(void) {
 }
 
 int isQuit(void) {
-    return input_quit;
+    return inputQuit;
 }

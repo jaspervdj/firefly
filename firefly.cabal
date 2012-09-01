@@ -22,10 +22,12 @@ Library
 
   C-sources:
     cbits/engine.c
+    cbits/input.c
     cbits/video.c
 
   Exposed-modules:     
     Firefly.Engine
+    Firefly.Input
     Firefly.Vector
     Firefly.Video
 
