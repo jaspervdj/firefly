@@ -1,33 +1,35 @@
---------------------------------------------------------------------------------
 {-# LANGUAGE CPP                      #-}
 {-# LANGUAGE ForeignFunctionInterface #-}
-module Firefly.Engine
-    ( init
-    , quit
+module Firefly.Input
+    ( flush
+
+    , isQuit
     ) where
 
 
 --------------------------------------------------------------------------------
-import           Prelude hiding (init)
+import           Foreign.C.Types (CInt (..))
 
 
 --------------------------------------------------------------------------------
-#include "engine.h"
+#include "input.h"
 
 
 --------------------------------------------------------------------------------
-foreign import ccall unsafe "init" c_init :: IO ()
+foreign import ccall unsafe "flush" c_flush :: IO ()
 
 
 --------------------------------------------------------------------------------
-init :: IO ()
-init = c_init
+flush :: IO ()
+flush = c_flush
 
 
 --------------------------------------------------------------------------------
-foreign import ccall unsafe "quit" c_quit :: IO ()
+foreign import ccall unsafe "isQuit" c_isQuit :: IO CInt
 
 
 --------------------------------------------------------------------------------
-quit :: IO ()
-quit = c_quit
+isQuit :: IO Bool
+isQuit = do
+    i <- c_isQuit
+    return $ i /= 0
