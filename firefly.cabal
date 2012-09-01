@@ -28,8 +28,12 @@ Library
   Exposed-modules:     
     Firefly.Engine
     Firefly.Input
+    Firefly.Input.Keys
     Firefly.Vector
     Firefly.Video
+
+  Other-modules:
+    Firefly.Input.Internal
 
   Build-depends:
     base >= 4 && < 5

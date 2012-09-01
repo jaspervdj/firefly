@@ -22,61 +22,49 @@ import           Firefly.Vector
 
 
 --------------------------------------------------------------------------------
-foreign import ccall unsafe "setMode" c_setMode
-    :: CInt -> CInt -> IO ()
+foreign import ccall unsafe "video_setMode" video_setMode :: CInt -> CInt -> IO ()
+foreign import ccall unsafe "video_screenWidth" video_screenWidth :: IO CInt
+foreign import ccall unsafe "video_screenHeight" video_screenHeight
+    :: IO CInt
+foreign import ccall unsafe "video_startFrame" video_startFrame :: IO ()
+foreign import ccall unsafe "video_endFrame" video_endFrame :: IO ()
+foreign import ccall unsafe "video_startLine" video_startLine :: IO ()
+foreign import ccall unsafe "video_endLine" video_endLine :: IO ()
+foreign import ccall unsafe "video_vertex" video_vertex
+    :: CDouble -> CDouble -> IO ()
 
 
 --------------------------------------------------------------------------------
 setMode :: (Int, Int) -> IO ()
 setMode (width, height) =
-    c_setMode (fromIntegral width) (fromIntegral height)
-
-
---------------------------------------------------------------------------------
-foreign import ccall unsafe "screenWidth" c_screenWidth :: IO CInt
-foreign import ccall unsafe "screenHeight" c_screenHeight :: IO CInt
+    video_setMode (fromIntegral width) (fromIntegral height)
 
 
 --------------------------------------------------------------------------------
 screenSize :: IO (Int, Int)
 screenSize = do
-    w <- c_screenWidth
-    h <- c_screenHeight
+    w <- video_screenWidth
+    h <- video_screenHeight
     return (fromIntegral w, fromIntegral h)
-
-
---------------------------------------------------------------------------------
-foreign import ccall unsafe "startFrame" c_startFrame :: IO ()
-foreign import ccall unsafe "endFrame" c_endFrame :: IO ()
 
 
 --------------------------------------------------------------------------------
 frame :: IO () -> IO ()
 frame block = do
-    c_startFrame
+    video_startFrame
     block
-    c_endFrame
-
-
---------------------------------------------------------------------------------
-foreign import ccall unsafe "startLine" c_startLine :: IO ()
-foreign import ccall unsafe "endLine" c_endLine :: IO ()
+    video_endFrame
 
 
 --------------------------------------------------------------------------------
 line :: [Vector] -> IO ()
 line vectors = do
-    c_startLine
+    video_startLine
     mapM_ vertex vectors
-    c_endLine
-
-
---------------------------------------------------------------------------------
-foreign import ccall unsafe "vertex" c_vertex
-    :: CDouble -> CDouble -> IO ()
+    video_endLine
 
 
 --------------------------------------------------------------------------------
 vertex :: Vector -> IO ()
-vertex (Vector x y) = c_vertex (realToFrac x) (realToFrac y)
+vertex (Vector x y) = video_vertex (realToFrac x) (realToFrac y)
 {-# INLINE vertex #-}

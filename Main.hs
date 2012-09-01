@@ -1,13 +1,21 @@
+--------------------------------------------------------------------------------
 module Main where
 
-import Control.Monad (forever)
-import Control.Concurrent (threadDelay)
 
-import qualified Firefly.Engine as Engine
-import qualified Firefly.Input as Input
-import qualified Firefly.Video as Video
-import Firefly.Vector
+--------------------------------------------------------------------------------
+import           Control.Concurrent (threadDelay)
+import           Control.Monad      (forever)
 
+
+--------------------------------------------------------------------------------
+import qualified Firefly.Engine     as Engine
+import qualified Firefly.Input      as Input
+import qualified Firefly.Input.Keys as Keys
+import           Firefly.Vector
+import qualified Firefly.Video      as Video
+
+
+--------------------------------------------------------------------------------
 main :: IO ()
 main = do
     Engine.init
@@ -18,6 +26,7 @@ main = do
     Engine.quit
 
 
+--------------------------------------------------------------------------------
 loop :: IO ()
 loop = do
     Video.frame $ do
@@ -27,4 +36,5 @@ loop = do
 
     Input.flush
     quit <- Input.isQuit
-    if quit then return () else loop
+    esc  <- Input.isKeyDown Keys.escape
+    if quit || esc then return () else loop

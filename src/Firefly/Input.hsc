@@ -1,14 +1,21 @@
 {-# LANGUAGE CPP                      #-}
 {-# LANGUAGE ForeignFunctionInterface #-}
 module Firefly.Input
-    ( flush
+    ( Key
+    
+    , flush
 
     , isQuit
+    , isKeyDown
     ) where
 
 
 --------------------------------------------------------------------------------
-import           Foreign.C.Types (CInt (..))
+import           Foreign.C.Types        (CInt (..))
+
+
+--------------------------------------------------------------------------------
+import           Firefly.Input.Internal
 
 
 --------------------------------------------------------------------------------
@@ -16,20 +23,25 @@ import           Foreign.C.Types (CInt (..))
 
 
 --------------------------------------------------------------------------------
-foreign import ccall unsafe "flush" c_flush :: IO ()
+foreign import ccall unsafe "input_flush" input_flush :: IO ()
+foreign import ccall unsafe "input_isQuit" input_isQuit :: IO CInt
+foreign import ccall unsafe "input_isKeyDown" input_isKeyDown :: CInt -> IO CInt
 
 
 --------------------------------------------------------------------------------
 flush :: IO ()
-flush = c_flush
-
-
---------------------------------------------------------------------------------
-foreign import ccall unsafe "isQuit" c_isQuit :: IO CInt
+flush = input_flush
 
 
 --------------------------------------------------------------------------------
 isQuit :: IO Bool
 isQuit = do
-    i <- c_isQuit
+    i <- input_isQuit
+    return $ i /= 0
+
+
+--------------------------------------------------------------------------------
+isKeyDown :: Key -> IO Bool
+isKeyDown (Key code) = do
+    i <- input_isKeyDown code
     return $ i /= 0

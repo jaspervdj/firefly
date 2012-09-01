@@ -1,17 +1,17 @@
 #ifndef VIDEO_H
 #define VIDEO_H
 
-void setMode(int width, int height);
+void video_setMode(int width, int height);
 
-int screenWidth(void);
-int screenHeight(void);
+int video_screenWidth(void);
+int video_screenHeight(void);
 
-void startFrame(void);
-void endFrame(void);
+void video_startFrame(void);
+void video_endFrame(void);
 
-void startLine(void);
-void endLine(void);
+void video_startLine(void);
+void video_endLine(void);
 
-void vertex(double x, double y);
+void video_vertex(double x, double y);
 
 #endif

@@ -4,9 +4,9 @@
 
 #include "video.h"
 
-void setMode(int width, int height) {
+void video_setMode(int width, int height) {
 #ifdef DEBUG
-    printf("video/setMode(%d, %d)\n", width, height);
+    printf("video_setMode(%d, %d)\n", width, height);
 #endif
     SDL_SetVideoMode(width, height, 24, SDL_OPENGL | SDL_DOUBLEBUF);
 
@@ -23,35 +23,35 @@ void setMode(int width, int height) {
     glMatrixMode(GL_MODELVIEW);
 }
 
-int screenWidth(void) {
+int video_screenWidth(void) {
     SDL_Surface *screen = SDL_GetVideoSurface();
     return screen->w;
 }
 
 
-int screenHeight(void) {
+int video_screenHeight(void) {
     SDL_Surface *screen = SDL_GetVideoSurface();
     return screen->h;
 }
 
 
-void startFrame(void) {
+void video_startFrame(void) {
     glLoadIdentity();
 }
 
-void endFrame(void) {
+void video_endFrame(void) {
     SDL_GL_SwapBuffers();
 }
 
-void startLine(void) {
+void video_startLine(void) {
     glColor4f(1.0f, 1.0f, 1.0f, 1.0f);
     glBegin(GL_LINE_STRIP);
 }
 
-void endLine(void) {
+void video_endLine(void) {
     glEnd();
 }
 
-void vertex(double x, double y) {
+void video_vertex(double x, double y) {
     glVertex3d(x, y, 0.0f);
 }
