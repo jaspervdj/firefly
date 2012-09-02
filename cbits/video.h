@@ -1,5 +1,5 @@
-#ifndef VIDEO_H
-#define VIDEO_H
+#ifndef FF_VIDEO_H
+#define FF_VIDEO_H
 
 #include "video/image.h"
 

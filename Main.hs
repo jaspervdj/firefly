@@ -18,7 +18,7 @@ main = do
     F.init
     F.setVideoMode (800, 600)
 
-    img <- F.imageFromNoise (100, 200)
+    img <- F.imageFromGradient (100, 200)
 
     loop img
 

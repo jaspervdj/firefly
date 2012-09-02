@@ -1,15 +1,14 @@
 --------------------------------------------------------------------------------
-{-# LANGUAGE CPP                       #-}
-{-# LANGUAGE ExistentialQuantification #-}
-{-# LANGUAGE ForeignFunctionInterface  #-}
+{-# LANGUAGE CPP                      #-}
+{-# LANGUAGE ForeignFunctionInterface #-}
 module Firefly.Video.Image
     ( Image
-    , imageFromNoise
+    , imageFromGradient
     ) where
 
 
 --------------------------------------------------------------------------------
-import           Control.Applicative          ((<$>))
+import           Control.Applicative    ((<$>))
 import           Foreign.C.Types
 import           Foreign.ForeignPtr
 import           Foreign.Ptr
@@ -24,14 +23,14 @@ import           Firefly.Video.Internal
 
 
 --------------------------------------------------------------------------------
-foreign import ccall unsafe "ff_imageFromNoise" ff_imageFromNoise
+foreign import ccall unsafe "ff_imageFromGradient" ff_imageFromGradient
     :: CInt -> CInt -> IO (Ptr CImage)
 foreign import ccall "&ff_imageFree" ff_imageFree
     :: FunPtr (Ptr CImage -> IO ())
 
 
 --------------------------------------------------------------------------------
-imageFromNoise :: (Int, Int) -> IO Image
-imageFromNoise (w, h) = do
-    ptr <- ff_imageFromNoise (fromIntegral w) (fromIntegral h)
+imageFromGradient :: (Int, Int) -> IO Image
+imageFromGradient (w, h) = do
+    ptr <- ff_imageFromGradient (fromIntegral w) (fromIntegral h)
     Image <$> newForeignPtr ff_imageFree ptr

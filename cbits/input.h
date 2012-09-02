@@ -1,5 +1,5 @@
-#ifndef INPUT_H
-#define INPUT_H
+#ifndef FF_INPUT_H
+#define FF_INPUT_H
 
 void ff_flushInput(void);
 

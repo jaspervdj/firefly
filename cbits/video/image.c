@@ -39,7 +39,7 @@ ff_image *ff_imageCreate(int width, int height, int pixelSize,
     /* Write pixel data to video memory */
 
     tp = malloc(image->tw * image->th * pixelSize * sizeof(GLubyte));
-    ff_copyPixels(pixelSize, pixels, width, height, tp, image->tw, image->th);
+    ff_copyPixels(pixels, width, height, tp, image->tw, image->th, pixelSize);
 
     glTexImage2D(GL_TEXTURE_2D, 0, pixelSize, image->tw, image->th, 0, format,
             GL_UNSIGNED_BYTE, (GLvoid *) tp);
@@ -49,18 +49,23 @@ ff_image *ff_imageCreate(int width, int height, int pixelSize,
     return image;
 }
 
-ff_image *ff_imageFromNoise(int width, int height) {
+ff_image *ff_imageFromGradient(int width, int height) {
     GLubyte *pixels;
-    int x, y, b;
+    int x, y;
+    int r, g, b;
     ff_image *image;
 
     pixels = malloc(width * height * 3 * sizeof(GLubyte));
     for(x = 0; x < width; x++) {
         for(y = 0; y < height; y++) {
-            for(b = 0; b < 3; b++) {
-                pixels[y * width * 3 + x * 3 + b] =
-                        (GLubyte) (random() % 0x100);
-            }
+
+            r = (GLubyte) (0xff * (float) x / (float) width);
+            g = (GLubyte) (0xff * (float) y / (float) height);
+            b = 0xff;
+
+            pixels[y * width * 3 + x * 3] = r;
+            pixels[y * width * 3 + x * 3 + 1] = g;
+            pixels[y * width * 3 + x * 3 + 2] = b;
         }
     }
 
@@ -96,13 +101,13 @@ int ff_nearestPowerOfTwo(int x) {
     return y;
 }
 
-void ff_copyPixels(int pixelSize, GLubyte *src, int sw, int sh,
-        GLubyte *dst, int dw, int dh) {
+void ff_copyPixels(GLubyte *src, int sw, int sh,
+        GLubyte *dst, int dw, int dh, int pixelSize) {
     int x, y, b;
 
 #ifdef DEBUG
-    printf("video/image/ff_copyPixels(%d, _, %d, %d, _, %d, %d)\n",
-            pixelSize, sw, sh, dw, dh);
+    printf("video/image/ff_copyPixels(_, %d, %d, _, %d, %d, %d)\n",
+            sw, sh, dw, dh, pixelSize);
 #endif
 
     for(x = 0; x < dw; x++) {
