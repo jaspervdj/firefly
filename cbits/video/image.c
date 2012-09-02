@@ -58,7 +58,8 @@ ff_image *ff_imageFromNoise(int width, int height) {
     for(x = 0; x < width; x++) {
         for(y = 0; y < height; y++) {
             for(b = 0; b < 3; b++) {
-                pixels[y * width + x * 3 + b] = (GLubyte) (random() % 0x100);
+                pixels[y * width * 3 + x * 3 + b] =
+                        (GLubyte) (random() % 0x100);
             }
         }
     }
@@ -108,7 +109,7 @@ void ff_copyPixels(int pixelSize, GLubyte *src, int sw, int sh,
         for(y = 0; y < dh; y++) {
             for(b = 0; b < pixelSize; b++) {
                 dst[dw * pixelSize * y + pixelSize * x + b] =
-                    (x < sw && y < sw) ?
+                    (x < sw && y < sh) ?
                         src[sw * pixelSize * y + pixelSize * x + b] : 0xff;
             }
         }
