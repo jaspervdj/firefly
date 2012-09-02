@@ -11,3 +11,14 @@ much anything.
 We embrace the notion that Haskell is the world's finest imperative language and
 expose a very imperative API. However, it's very easy to add something more
 declarative (FRP in particular) on top of it.
+
+Dependencies
+------------
+
+Outside of Haskell, Firefly depends on:
+
+- OpenGL, for fast graphics;
+- libpng, for image loading;
+- SDL, for pretty much anything else.
+
+It should relatively painless to install these on your operating system.
