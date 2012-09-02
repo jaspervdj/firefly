@@ -4,17 +4,21 @@ module Firefly.Video
     ( setVideoMode
     , screenSize
     , frame
-    
-    , line
+
+    , drawLine
+    , drawImage
     ) where
 
 
 --------------------------------------------------------------------------------
-import           Foreign.C.Types (CDouble (..), CInt (..))
+import           Foreign.C.Types
+import           Foreign.ForeignPtr
+import           Foreign.Ptr
 
 
 --------------------------------------------------------------------------------
 import           Firefly.Vector
+import           Firefly.Video.Internal
 
 
 --------------------------------------------------------------------------------
@@ -33,6 +37,8 @@ foreign import ccall unsafe "ff_startLine" ff_startLine :: IO ()
 foreign import ccall unsafe "ff_endLine" ff_endLine :: IO ()
 foreign import ccall unsafe "ff_vertex" ff_vertex
     :: CDouble -> CDouble -> IO ()
+foreign import ccall unsafe "ff_drawImage" ff_drawImage
+    :: Ptr a -> IO ()
 
 
 --------------------------------------------------------------------------------
@@ -60,15 +66,20 @@ frame block = do
 
 
 --------------------------------------------------------------------------------
-line :: [Vector] -> IO ()
-line vectors = do
+drawLine :: [Vector] -> IO ()
+drawLine vectors = do
     ff_startLine
     mapM_ vertex vectors
     ff_endLine
-{-# INLINE line #-}
+{-# INLINE drawLine #-}
 
 
 --------------------------------------------------------------------------------
 vertex :: Vector -> IO ()
 vertex (Vector x y) = ff_vertex (realToFrac x) (realToFrac y)
 {-# INLINE vertex #-}
+
+
+--------------------------------------------------------------------------------
+drawImage :: Image -> IO ()
+drawImage (Image fptr) = withForeignPtr fptr $ \ptr -> ff_drawImage ptr

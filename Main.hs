@@ -18,24 +18,24 @@ main = do
     F.init
     F.setVideoMode (800, 600)
 
-    img <- F.imageCreate
+    img <- F.imageFromNoise (100, 200)
 
-    loop
+    loop img
 
     F.quit
 
 
 --------------------------------------------------------------------------------
-loop :: IO ()
-loop = do
+loop :: F.Image -> IO ()
+loop img = do
     F.flushInput
     quit     <- F.receivedQuit
     esc      <- F.keyDown FK.escape
     mousePos <- F.mousePosition
 
     F.frame $ do
-        F.line [F.Vector 100 100, F.Vector 500 100, F.fromInts mousePos]
+        F.drawImage img
 
     threadDelay 1000
 
-    if quit || esc then return () else loop
+    if quit || esc then return () else loop img

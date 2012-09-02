@@ -4,15 +4,19 @@
 {-# LANGUAGE ForeignFunctionInterface  #-}
 module Firefly.Video.Image
     ( Image
-    , imageCreate
+    , imageFromNoise
     ) where
 
 
 --------------------------------------------------------------------------------
-import           Control.Applicative ((<$>))
+import           Control.Applicative          ((<$>))
 import           Foreign.C.Types
 import           Foreign.ForeignPtr
 import           Foreign.Ptr
+
+
+--------------------------------------------------------------------------------
+import           Firefly.Video.Internal
 
 
 --------------------------------------------------------------------------------
@@ -20,21 +24,14 @@ import           Foreign.Ptr
 
 
 --------------------------------------------------------------------------------
-foreign import ccall unsafe "ff_imageCreate" ff_imageCreate :: IO (Ptr CImage)
+foreign import ccall unsafe "ff_imageFromNoise" ff_imageFromNoise
+    :: CInt -> CInt -> IO (Ptr CImage)
 foreign import ccall "&ff_imageFree" ff_imageFree
     :: FunPtr (Ptr CImage -> IO ())
 
 
 --------------------------------------------------------------------------------
-type CImage = CChar
-
-
---------------------------------------------------------------------------------
-newtype Image = Image (ForeignPtr CImage)
-
-
---------------------------------------------------------------------------------
-imageCreate :: IO Image
-imageCreate = do
-    ptr <- ff_imageCreate
+imageFromNoise :: (Int, Int) -> IO Image
+imageFromNoise (w, h) = do
+    ptr <- ff_imageFromNoise (fromIntegral w) (fromIntegral h)
     Image <$> newForeignPtr ff_imageFree ptr

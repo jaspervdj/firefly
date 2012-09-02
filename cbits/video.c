@@ -55,3 +55,47 @@ void ff_endLine(void) {
 void ff_vertex(double x, double y) {
     glVertex3d(x, y, 0.0f);
 }
+
+void ff_drawImage(ff_image *image) {
+    glColor3f(1.0f, 1.0f, 1.0f);
+    glEnable(GL_TEXTURE_2D);
+    glBindTexture(GL_TEXTURE_2D, image->texture);
+
+    glBegin(GL_QUADS);
+
+    /*
+    glTexCoord2f(image->ltc, image->ttc);
+    glVertex2f(0.0f, 0.0f);
+
+    glTexCoord2f(image->ltc, image->btc);
+    glVertex2f(0.0f, (GLfloat) image->height);
+
+    glTexCoord2f(image->rtc, image->btc);
+    glVertex2f((GLfloat) image->tw, (GLfloat) image->height);
+
+    glTexCoord2f(image->rtc, image->ttc);
+    glVertex2f((GLfloat) image->width, 0.0f);
+    */
+    glTexCoord2f(0.0f, 0.0f);
+    glVertex2f(0.0f, 0.0f);
+
+    glTexCoord2f(0.0f, 1.0f);
+    glVertex2f(0.0f, (GLfloat) image->th);
+
+    glTexCoord2f(1.0f, 1.0f);
+    glVertex2f((GLfloat) image->tw, (GLfloat) image->th);
+
+    glTexCoord2f(1.0f, 0.0f);
+    glVertex2f((GLfloat) image->tw, 0.0f);
+
+    glEnd();
+
+    glDisable(GL_TEXTURE_2D);
+    glColor3f(1.0f, 0.0f, 0.0f);
+    glBegin(GL_LINE_LOOP);
+    glVertex2f(0.0f, 0.0f);
+    glVertex2f(0.0f, (GLfloat) image->height);
+    glVertex2f((GLfloat) image->width, (GLfloat) image->height);
+    glVertex2f((GLfloat) image->width, 0.0f);
+    glEnd();
+}
