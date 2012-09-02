@@ -14,16 +14,13 @@ import qualified Firefly.Input.Keys as FK
 
 --------------------------------------------------------------------------------
 main :: IO ()
-main = do
-    F.init
+main = F.firefly $ do
     F.setVideoMode (800, 600)
 
     img <- F.imageFromPng "example/acid.png"
     putStrLn $ "Image size: " ++ show (F.imageSize img)
 
     loop img
-
-    F.quit
 
 
 --------------------------------------------------------------------------------
@@ -37,6 +34,6 @@ loop img = do
     F.frame $ do
         F.drawImageDebug img
 
-    threadDelay 1000
+    F.delay 10
 
     if quit || esc then return () else loop img

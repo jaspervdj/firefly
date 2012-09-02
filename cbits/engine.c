@@ -16,3 +16,11 @@ void ff_quit(void) {
 #endif
     SDL_Quit();
 }
+
+int ff_ticks(void) {
+    return SDL_GetTicks();
+}
+
+void ff_delay(int ms) {
+    SDL_Delay(ms);
+}

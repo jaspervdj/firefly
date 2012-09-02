@@ -1,4 +1,4 @@
-firefly
+Firefly
 =======
 
 Firefly is a Haskell 2D game library implemented as a thin but high-level layer
