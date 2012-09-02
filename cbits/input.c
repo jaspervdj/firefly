@@ -8,13 +8,13 @@ int global_quit = 0;
 int global_mouseX = 0;
 int global_mouseY = 0;
 
-void input_flush(void) {
+void ff_flushInput(void) {
     SDL_Event event;
     while(SDL_PollEvent(&event)) {
         switch(event.type) {
             case SDL_QUIT:
 #ifdef DEBUG
-                printf("input_flush(): quit received\n");
+                printf("input/ff_flushInput(): quit received\n");
                 global_quit = 1;
 #endif
                 break;
@@ -26,21 +26,21 @@ void input_flush(void) {
     SDL_GetMouseState(&global_mouseX, &global_mouseY);
 }
 
-int input_quit(void) {
+int ff_receivedQuit(void) {
     return global_quit;
 }
 
-int input_keyDown(int key) {
+int ff_keyDown(int key) {
     /* TODO We can probably make keyState global */
     int numkeys;
     Uint8 *keyState = SDL_GetKeyState(&numkeys);
     return (int) keyState[key];
 }
 
-int input_mouseX(void) {
+int ff_mouseX(void) {
     return global_mouseX;
 }
 
-int input_mouseY(void) {
+int ff_mouseY(void) {
     return global_mouseY;
 }

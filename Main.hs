@@ -8,34 +8,31 @@ import           Control.Monad      (forever)
 
 
 --------------------------------------------------------------------------------
-import qualified Firefly.Engine     as Engine
-import qualified Firefly.Input      as Input
-import qualified Firefly.Input.Keys as Keys
-import           Firefly.Vector
-import qualified Firefly.Video      as Video
+import qualified Firefly            as F
+import qualified Firefly.Input.Keys as FK
 
 
 --------------------------------------------------------------------------------
 main :: IO ()
 main = do
-    Engine.init
-    Video.setMode (800, 600)
+    F.init
+    F.setVideoMode (800, 600)
 
     loop
 
-    Engine.quit
+    F.quit
 
 
 --------------------------------------------------------------------------------
 loop :: IO ()
 loop = do
-    Input.flush
-    quit     <- Input.quit
-    esc      <- Input.keyDown Keys.escape
-    mousePos <- Input.mousePosition
+    F.flushInput
+    quit     <- F.receivedQuit
+    esc      <- F.keyDown FK.escape
+    mousePos <- F.mousePosition
 
-    Video.frame $ do
-        Video.line [Vector 100 100, Vector 500 100, fromInts mousePos]
+    F.frame $ do
+        F.line [F.Vector 100 100, F.Vector 500 100, F.fromInts mousePos]
 
     threadDelay 1000
 

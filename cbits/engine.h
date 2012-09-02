@@ -1,7 +1,7 @@
 #ifndef ENGINE_H
 #define ENGINE_H
 
-void engine_init(void);
-void engine_quit(void);
+void ff_init(void);
+void ff_quit(void);
 
 #endif

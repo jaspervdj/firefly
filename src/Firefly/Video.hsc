@@ -1,7 +1,7 @@
 {-# LANGUAGE CPP                      #-}
 {-# LANGUAGE ForeignFunctionInterface #-}
 module Firefly.Video
-    ( setMode
+    ( setVideoMode
     , screenSize
     , frame
     
@@ -22,49 +22,53 @@ import           Firefly.Vector
 
 
 --------------------------------------------------------------------------------
-foreign import ccall unsafe "video_setMode" video_setMode :: CInt -> CInt -> IO ()
-foreign import ccall unsafe "video_screenWidth" video_screenWidth :: IO CInt
-foreign import ccall unsafe "video_screenHeight" video_screenHeight
+foreign import ccall unsafe "ff_setVideoMode" ff_setVideoMode
+    :: CInt -> CInt -> IO ()
+foreign import ccall unsafe "ff_screenWidth" ff_screenWidth :: IO CInt
+foreign import ccall unsafe "ff_screenHeight" ff_screenHeight
     :: IO CInt
-foreign import ccall unsafe "video_startFrame" video_startFrame :: IO ()
-foreign import ccall unsafe "video_endFrame" video_endFrame :: IO ()
-foreign import ccall unsafe "video_startLine" video_startLine :: IO ()
-foreign import ccall unsafe "video_endLine" video_endLine :: IO ()
-foreign import ccall unsafe "video_vertex" video_vertex
+foreign import ccall unsafe "ff_startFrame" ff_startFrame :: IO ()
+foreign import ccall unsafe "ff_endFrame" ff_endFrame :: IO ()
+foreign import ccall unsafe "ff_startLine" ff_startLine :: IO ()
+foreign import ccall unsafe "ff_endLine" ff_endLine :: IO ()
+foreign import ccall unsafe "ff_vertex" ff_vertex
     :: CDouble -> CDouble -> IO ()
 
 
 --------------------------------------------------------------------------------
-setMode :: (Int, Int) -> IO ()
-setMode (width, height) =
-    video_setMode (fromIntegral width) (fromIntegral height)
+setVideoMode :: (Int, Int) -> IO ()
+setVideoMode (width, height) =
+    ff_setVideoMode (fromIntegral width) (fromIntegral height)
 
 
 --------------------------------------------------------------------------------
 screenSize :: IO (Int, Int)
 screenSize = do
-    w <- video_screenWidth
-    h <- video_screenHeight
+    w <- ff_screenWidth
+    h <- ff_screenHeight
     return (fromIntegral w, fromIntegral h)
+{-# INLINE screenSize #-}
 
 
 --------------------------------------------------------------------------------
 frame :: IO () -> IO ()
 frame block = do
-    video_startFrame
+    ff_startFrame
     block
-    video_endFrame
+    ff_endFrame
+{-# INLINE frame #-}
 
 
 --------------------------------------------------------------------------------
 line :: [Vector] -> IO ()
 line vectors = do
-    video_startLine
+    ff_startLine
     mapM_ vertex vectors
-    video_endLine
+    ff_endLine
+{-# INLINE line #-}
 
 
 --------------------------------------------------------------------------------
 vertex :: Vector -> IO ()
-vertex (Vector x y) = video_vertex (realToFrac x) (realToFrac y)
+vertex (Vector x y) = ff_vertex (realToFrac x) (realToFrac y)
 {-# INLINE vertex #-}

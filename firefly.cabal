@@ -26,6 +26,7 @@ Library
     cbits/video.c
 
   Exposed-modules:     
+    Firefly
     Firefly.Engine
     Firefly.Input
     Firefly.Input.Keys

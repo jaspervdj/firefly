@@ -16,14 +16,14 @@ import           Prelude hiding (init)
 
 
 --------------------------------------------------------------------------------
-foreign import ccall unsafe "engine_init" engine_init :: IO ()
-foreign import ccall unsafe "engine_quit" engine_quit :: IO ()
+foreign import ccall unsafe "ff_init" ff_init :: IO ()
+foreign import ccall unsafe "ff_quit" ff_quit :: IO ()
 
 
 --------------------------------------------------------------------------------
 init :: IO ()
-init = engine_init
+init = ff_init
 
 --------------------------------------------------------------------------------
 quit :: IO ()
-quit = engine_quit
+quit = ff_quit

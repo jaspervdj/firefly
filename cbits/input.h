@@ -1,11 +1,11 @@
 #ifndef INPUT_H
 #define INPUT_H
 
-void input_flush(void);
+void ff_flushInput(void);
 
-int input_quit(void);
-int input_keyDown(int key);
-int input_mouseX(void);
-int input_mouseY(void);
+int ff_receivedQuit(void);
+int ff_keyDown(int key);
+int ff_mouseX(void);
+int ff_mouseY(void);
 
 #endif

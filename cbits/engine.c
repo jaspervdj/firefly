@@ -3,16 +3,16 @@
 
 #include "engine.h"
 
-void engine_init(void) {
+void ff_init(void) {
 #ifdef DEBUG
-    printf("engine_init()\n");
+    printf("engine/ff_init()\n");
 #endif
     SDL_Init(SDL_INIT_EVERYTHING);
 }
 
-void engine_quit(void) {
+void ff_quit(void) {
 #ifdef DEBUG
-    printf("engine_quit()\n");
+    printf("engine/ff_quit()\n");
 #endif
     SDL_Quit();
 }

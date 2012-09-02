@@ -3,9 +3,9 @@
 module Firefly.Input
     ( Key
     
-    , flush
+    , flushInput
 
-    , quit
+    , receivedQuit
     , keyDown
     , mousePosition
     ) where
@@ -24,35 +24,35 @@ import           Firefly.Input.Internal
 
 
 --------------------------------------------------------------------------------
-foreign import ccall unsafe "input_flush" input_flush :: IO ()
-foreign import ccall unsafe "input_quit" input_quit :: IO CInt
-foreign import ccall unsafe "input_keyDown" input_keyDown :: CInt -> IO CInt
-foreign import ccall unsafe "input_mouseX" input_mouseX :: IO CInt
-foreign import ccall unsafe "input_mouseY" input_mouseY :: IO CInt
+foreign import ccall unsafe "ff_flushInput" ff_flushInput :: IO ()
+foreign import ccall unsafe "ff_receivedQuit" ff_receivedQuit :: IO CInt
+foreign import ccall unsafe "ff_keyDown" ff_keyDown :: CInt -> IO CInt
+foreign import ccall unsafe "ff_mouseX" ff_mouseX :: IO CInt
+foreign import ccall unsafe "ff_mouseY" ff_mouseY :: IO CInt
 
 
 --------------------------------------------------------------------------------
-flush :: IO ()
-flush = input_flush
+flushInput :: IO ()
+flushInput = ff_flushInput
 
 
 --------------------------------------------------------------------------------
-quit :: IO Bool
-quit = do
-    i <- input_quit
+receivedQuit :: IO Bool
+receivedQuit = do
+    i <- ff_receivedQuit
     return $ i /= 0
 
 
 --------------------------------------------------------------------------------
 keyDown :: Key -> IO Bool
 keyDown (Key code) = do
-    i <- input_keyDown code
+    i <- ff_keyDown code
     return $ i /= 0
 
 
 --------------------------------------------------------------------------------
 mousePosition :: IO (Int, Int)
 mousePosition = do
-    x <- input_mouseX
-    y <- input_mouseY
+    x <- ff_mouseX
+    y <- ff_mouseY
     return (fromIntegral x, fromIntegral y)
