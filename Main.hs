@@ -19,6 +19,7 @@ main = do
     F.setVideoMode (800, 600)
 
     img <- F.imageFromGradient (100, 200)
+    putStrLn $ "Image size: " ++ show (F.imageSize img)
 
     loop img
 
