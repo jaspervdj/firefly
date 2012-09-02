@@ -18,6 +18,8 @@ main = do
     F.init
     F.setVideoMode (800, 600)
 
+    img <- F.imageCreate
+
     loop
 
     F.quit
