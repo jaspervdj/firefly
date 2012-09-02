@@ -10,6 +10,7 @@ import           Control.Monad      (forever)
 --------------------------------------------------------------------------------
 import qualified Firefly            as F
 import qualified Firefly.Input.Keys as FK
+import           Firefly.Vector
 
 
 --------------------------------------------------------------------------------
@@ -30,9 +31,14 @@ loop img = do
     quit     <- F.receivedQuit
     esc      <- F.keyDown FK.escape
     mousePos <- F.mousePosition
+    ticks    <- F.ticks
 
     F.frame $ do
-        F.drawImageDebug img
+        screenSize <- F.screenSize
+        F.translate $ F.fromInts screenSize ./ 2
+        F.rotate $ 2 * pi * fromIntegral ticks / 1000
+        F.drawImageCentered img
+        -- F.drawImageDebug img
 
     F.delay 10
 

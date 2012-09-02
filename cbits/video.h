@@ -20,4 +20,8 @@ void ff_drawImage(ff_image *image);
 void ff_drawImageCentered(ff_image *image);
 void ff_drawImageDebug(ff_image *image);
 
+void ff_translate(double x, double y);
+void ff_rotate(double r);
+void ff_scale(double x, double y);
+
 #endif

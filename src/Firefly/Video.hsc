@@ -9,6 +9,10 @@ module Firefly.Video
     , drawImage
     , drawImageCentered
     , drawImageDebug
+
+    , translate
+    , rotate
+    , scale
     ) where
 
 
@@ -45,6 +49,10 @@ foreign import ccall unsafe "ff_drawImageCentered" ff_drawImageCentered
     :: Ptr a -> IO ()
 foreign import ccall unsafe "ff_drawImageDebug" ff_drawImageDebug
     :: Ptr a -> IO ()
+foreign import ccall unsafe "ff_translate" ff_translate
+    :: CDouble -> CDouble -> IO ()
+foreign import ccall unsafe "ff_rotate" ff_rotate :: CDouble -> IO ()
+foreign import ccall unsafe "ff_scale" ff_scale :: CDouble -> CDouble -> IO ()
 
 
 --------------------------------------------------------------------------------
@@ -99,3 +107,22 @@ drawImageCentered (Image fptr) = withForeignPtr fptr ff_drawImageCentered
 --------------------------------------------------------------------------------
 drawImageDebug :: Image -> IO ()
 drawImageDebug (Image fptr) = withForeignPtr fptr ff_drawImageDebug
+
+
+--------------------------------------------------------------------------------
+translate :: Vector -> IO ()
+translate (Vector x y) = ff_translate (realToFrac x) (realToFrac y)
+{-# INLINE translate #-}
+
+
+--------------------------------------------------------------------------------
+-- | Rotate the transformation matrix by the given amount of /radians/
+rotate :: Double -> IO ()
+rotate r = ff_rotate (realToFrac r)
+{-# INLINE rotate #-}
+
+
+--------------------------------------------------------------------------------
+scale :: Vector -> IO ()
+scale (Vector x y) = ff_scale (realToFrac x) (realToFrac y)
+{-# INLINE scale #-}

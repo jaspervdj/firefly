@@ -1,4 +1,5 @@
 #include <GL/gl.h>
+#include <math.h>
 #include <SDL.h>
 #include <stdio.h>
 
@@ -110,4 +111,16 @@ void ff_drawImageDebug(ff_image *image) {
     glVertex2f((GLfloat) image->width, (GLfloat) image->height);
     glVertex2f((GLfloat) image->width, 0.0f);
     glEnd();
+}
+
+void ff_translate(double x, double y) {
+    glTranslated(x, y, 0.0f);
+}
+
+void ff_rotate(double r) {
+    glRotated(r * 180 / M_PI, 0.0f, 0.0f, 1.0f);
+}
+
+void ff_scale(double x, double y) {
+    glScaled(x, y, 1.0f);
 }
