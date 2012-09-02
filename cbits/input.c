@@ -14,7 +14,7 @@ void ff_flushInput(void) {
         switch(event.type) {
             case SDL_QUIT:
 #ifdef DEBUG
-                printf("input/ff_flushInput(): quit received\n");
+                printf("input/ff_flushInput: quit received\n");
                 global_quit = 1;
 #endif
                 break;

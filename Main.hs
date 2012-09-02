@@ -18,7 +18,7 @@ main = do
     F.init
     F.setVideoMode (800, 600)
 
-    img <- F.imageFromGradient (100, 200)
+    img <- F.imageFromPng "acid.png"
     putStrLn $ "Image size: " ++ show (F.imageSize img)
 
     loop img
@@ -36,7 +36,6 @@ loop img = do
 
     F.frame $ do
         F.drawImageDebug img
-        F.drawImage img
 
     threadDelay 1000
 

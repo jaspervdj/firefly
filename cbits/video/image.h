@@ -14,6 +14,7 @@ typedef struct {
 
 ff_image *ff_imageCreate(int width, int height, int pixelSize, GLubyte *pixels);
 ff_image *ff_imageFromGradient(int width, int height);
+ff_image *ff_imageFromPng(const char *filePath);
 void ff_imageFree(ff_image *image);
 
 
