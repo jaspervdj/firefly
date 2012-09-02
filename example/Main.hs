@@ -18,7 +18,7 @@ main = do
     F.init
     F.setVideoMode (800, 600)
 
-    img <- F.imageFromPng "acid.png"
+    img <- F.imageFromPng "example/acid.png"
     putStrLn $ "Image size: " ++ show (F.imageSize img)
 
     loop img

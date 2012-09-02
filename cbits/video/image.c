@@ -97,15 +97,16 @@ ff_image *ff_imageFromPng(const char *filePath) {
     /* Open PNG file */
     file = fopen(filePath, "rb");
     if(!file) {
-        fprintf(stderr,
-                "video/image/ff_imageFromPng: Could not open \"%s\"", filePath);
+        fprintf(stderr, "video/image/ff_imageFromPng: Could not open \"%s\"\n",
+                filePath);
         return 0;
     }
 
     /* Check signature */
     fread(buffer, 1, PNG_BYTES_TO_CHECK, file);
     if(png_sig_cmp(buffer, (png_size_t) 0, PNG_BYTES_TO_CHECK)) {
-        fprintf(stderr, "video/image/ff_imageFromPng: PNG signature in \"%s\"",
+        fprintf(stderr,
+                "video/image/ff_imageFromPng: PNG signature in \"%s\"\n",
                 filePath);
         fclose(file);
         return 0;

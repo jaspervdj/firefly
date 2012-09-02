@@ -47,9 +47,10 @@ Library
     libpng,
     sdl >= 1.2
 
-Executable firefly-test
-  Cpp-options: -DDEBUG
-  Main-is:     Main.hs
+Executable firefly-example
+  Cpp-options:    -DDEBUG
+  Hs-source-dirs: example
+  Main-is:        Main.hs
 
   Build-depends:
     base    >= 4   && < 5,
