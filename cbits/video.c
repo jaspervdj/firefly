@@ -63,7 +63,6 @@ void ff_drawImage(ff_image *image) {
 
     glBegin(GL_QUADS);
 
-    /*
     glTexCoord2f(image->ltc, image->ttc);
     glVertex2f(0.0f, 0.0f);
 
@@ -71,23 +70,36 @@ void ff_drawImage(ff_image *image) {
     glVertex2f(0.0f, (GLfloat) image->height);
 
     glTexCoord2f(image->rtc, image->btc);
-    glVertex2f((GLfloat) image->tw, (GLfloat) image->height);
+    glVertex2f((GLfloat) image->width, (GLfloat) image->height);
 
     glTexCoord2f(image->rtc, image->ttc);
     glVertex2f((GLfloat) image->width, 0.0f);
-    */
+
+    glEnd();
+}
+
+void ff_drawImageCentered(ff_image *image) {
+    glPushMatrix();
+    glTranslatef((float) -image->width * 0.5f,
+            (float) -image->height * 0.5f, 0.0f);
+    ff_drawImage(image);
+    glPopMatrix();
+}
+
+void ff_drawImageDebug(ff_image *image) {
+    glColor3f(1.0f, 1.0f, 1.0f);
+    glEnable(GL_TEXTURE_2D);
+    glBindTexture(GL_TEXTURE_2D, image->texture);
+
+    glBegin(GL_QUADS);
     glTexCoord2f(0.0f, 0.0f);
     glVertex2f(0.0f, 0.0f);
-
     glTexCoord2f(0.0f, 1.0f);
     glVertex2f(0.0f, (GLfloat) image->th);
-
     glTexCoord2f(1.0f, 1.0f);
     glVertex2f((GLfloat) image->tw, (GLfloat) image->th);
-
     glTexCoord2f(1.0f, 0.0f);
     glVertex2f((GLfloat) image->tw, 0.0f);
-
     glEnd();
 
     glDisable(GL_TEXTURE_2D);

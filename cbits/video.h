@@ -17,5 +17,7 @@ void ff_endLine(void);
 void ff_vertex(double x, double y);
 
 void ff_drawImage(ff_image *image);
+void ff_drawImageCentered(ff_image *image);
+void ff_drawImageDebug(ff_image *image);
 
 #endif

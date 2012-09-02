@@ -34,6 +34,7 @@ loop img = do
     mousePos <- F.mousePosition
 
     F.frame $ do
+        F.drawImageDebug img
         F.drawImage img
 
     threadDelay 1000

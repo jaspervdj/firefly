@@ -7,6 +7,8 @@ module Firefly.Video
 
     , drawLine
     , drawImage
+    , drawImageCentered
+    , drawImageDebug
     ) where
 
 
@@ -38,6 +40,10 @@ foreign import ccall unsafe "ff_endLine" ff_endLine :: IO ()
 foreign import ccall unsafe "ff_vertex" ff_vertex
     :: CDouble -> CDouble -> IO ()
 foreign import ccall unsafe "ff_drawImage" ff_drawImage
+    :: Ptr a -> IO ()
+foreign import ccall unsafe "ff_drawImageCentered" ff_drawImageCentered
+    :: Ptr a -> IO ()
+foreign import ccall unsafe "ff_drawImageDebug" ff_drawImageDebug
     :: Ptr a -> IO ()
 
 
@@ -82,4 +88,14 @@ vertex (Vector x y) = ff_vertex (realToFrac x) (realToFrac y)
 
 --------------------------------------------------------------------------------
 drawImage :: Image -> IO ()
-drawImage (Image fptr) = withForeignPtr fptr $ \ptr -> ff_drawImage ptr
+drawImage (Image fptr) = withForeignPtr fptr ff_drawImage
+
+
+--------------------------------------------------------------------------------
+drawImageCentered :: Image -> IO ()
+drawImageCentered (Image fptr) = withForeignPtr fptr ff_drawImageCentered
+
+
+--------------------------------------------------------------------------------
+drawImageDebug :: Image -> IO ()
+drawImageDebug (Image fptr) = withForeignPtr fptr ff_drawImageDebug
