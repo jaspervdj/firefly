@@ -6,9 +6,12 @@ module Firefly.Video
     , frame
 
     , drawLine
+
     , drawImage
     , drawImageCentered
     , drawImageDebug
+
+    , drawString
 
     , translate
     , rotate
@@ -17,8 +20,11 @@ module Firefly.Video
 
 
 --------------------------------------------------------------------------------
+import           Data.Char               (ord)
+import           Data.Word               (Word32)
 import           Foreign.C.Types
 import           Foreign.ForeignPtr
+import           Foreign.Marshal.Array
 import           Foreign.Ptr
 
 
@@ -44,11 +50,13 @@ foreign import ccall unsafe "ff_endLine" ff_endLine :: IO ()
 foreign import ccall unsafe "ff_vertex" ff_vertex
     :: CDouble -> CDouble -> IO ()
 foreign import ccall unsafe "ff_drawImage" ff_drawImage
-    :: Ptr a -> IO ()
+    :: Ptr CImage -> IO ()
 foreign import ccall unsafe "ff_drawImageCentered" ff_drawImageCentered
-    :: Ptr a -> IO ()
+    :: Ptr CImage -> IO ()
 foreign import ccall unsafe "ff_drawImageDebug" ff_drawImageDebug
-    :: Ptr a -> IO ()
+    :: Ptr CImage -> IO ()
+foreign import ccall unsafe "ff_drawString" ff_drawString
+    :: Ptr CFont -> Ptr a -> CInt -> IO ()
 foreign import ccall unsafe "ff_translate" ff_translate
     :: CDouble -> CDouble -> IO ()
 foreign import ccall unsafe "ff_rotate" ff_rotate :: CDouble -> IO ()
@@ -107,6 +115,17 @@ drawImageCentered (Image fptr) = withForeignPtr fptr ff_drawImageCentered
 --------------------------------------------------------------------------------
 drawImageDebug :: Image -> IO ()
 drawImageDebug (Image fptr) = withForeignPtr fptr ff_drawImageDebug
+
+
+--------------------------------------------------------------------------------
+drawString :: Font -> String -> IO ()
+drawString (Font fptr) string =
+    withForeignPtr fptr $ \ptr ->
+        withArrayLen codepoints $ \strlen str ->
+            ff_drawString ptr str (fromIntegral strlen)
+  where
+    codepoints :: [Word32]
+    codepoints = map (fromIntegral . ord) string
 
 
 --------------------------------------------------------------------------------

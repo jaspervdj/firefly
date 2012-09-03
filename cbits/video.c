@@ -11,8 +11,11 @@ void ff_setVideoMode(int width, int height) {
 #endif
     SDL_SetVideoMode(width, height, 24, SDL_OPENGL | SDL_DOUBLEBUF);
 
-
+    /* Enable textures, and transparent texures */
     glEnable(GL_TEXTURE_2D);
+    glEnable(GL_BLEND);
+    glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+
     glClearColor(0.0f, 0.0f, 0.0f, 0.0f);
     glViewport(0, 0, width, height);
      
@@ -28,12 +31,10 @@ int ff_screenWidth(void) {
     return screen->w;
 }
 
-
 int ff_screenHeight(void) {
     SDL_Surface *screen = SDL_GetVideoSurface();
     return screen->h;
 }
-
 
 void ff_startFrame(void) {
     glClear(GL_COLOR_BUFFER_BIT);
@@ -111,6 +112,22 @@ void ff_drawImageDebug(ff_image *image) {
     glVertex2f((GLfloat) image->width, (GLfloat) image->height);
     glVertex2f((GLfloat) image->width, 0.0f);
     glEnd();
+}
+
+void ff_drawString(ff_font *font, const Uint32 *string, int stringLength) {
+    int i;
+    ff_glyph *glyph;
+
+    glPushMatrix();
+    for(i = 0; i < stringLength; i++) {
+        glyph = ff_fontLookupGlyph(font, (int) string[i]);
+
+        glTranslatef((GLfloat) glyph->left, (GLfloat) -glyph->top, 0.0f);
+        ff_drawImage(glyph->image);
+        glTranslatef((GLfloat) (glyph->advance - glyph->left),
+                (GLfloat) glyph->top, 0.0f);
+    }
+    glPopMatrix();
 }
 
 void ff_translate(double x, double y) {

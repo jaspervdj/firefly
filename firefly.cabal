@@ -24,6 +24,7 @@ Library
     cbits/engine.c
     cbits/input.c
     cbits/video.c
+    cbits/video/font.c
     cbits/video/image.c
 
   Exposed-modules:     
@@ -33,6 +34,8 @@ Library
     Firefly.Input.Keys
     Firefly.Vector
     Firefly.Video
+    Firefly.Video.Color
+    Firefly.Video.Font
     Firefly.Video.Image
 
   Other-modules:
@@ -43,6 +46,7 @@ Library
     base >= 4 && < 5
 
   Pkgconfig-depends:
+    freetype2,
     gl,
     libpng,
     sdl >= 1.2

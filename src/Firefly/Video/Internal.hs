@@ -2,6 +2,9 @@
 module Firefly.Video.Internal
     ( CImage
     , Image (..)
+
+    , CFont
+    , Font (..)
     ) where
 
 
@@ -16,3 +19,11 @@ type CImage = CChar
 
 --------------------------------------------------------------------------------
 newtype Image = Image (ForeignPtr CChar)
+
+
+--------------------------------------------------------------------------------
+type CFont = CChar
+
+
+--------------------------------------------------------------------------------
+newtype Font = Font (ForeignPtr CFont)

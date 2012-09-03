@@ -42,7 +42,7 @@ ff_image *ff_imageCreate(int width, int height, int pixelSize,
     tp = malloc(image->tw * image->th * pixelSize * sizeof(GLubyte));
     ff_copyPixels(pixels, width, height, tp, image->tw, image->th, pixelSize);
 
-    glTexImage2D(GL_TEXTURE_2D, 0, pixelSize, image->tw, image->th, 0, format,
+    glTexImage2D(GL_TEXTURE_2D, 0, format, image->tw, image->th, 0, format,
             GL_UNSIGNED_BYTE, (GLvoid *) tp);
 
     free(tp);
@@ -57,8 +57,8 @@ ff_image *ff_imageFromGradient(int width, int height) {
     ff_image *image;
 
     pixels = malloc(width * height * 3 * sizeof(GLubyte));
-    for(x = 0; x < width; x++) {
-        for(y = 0; y < height; y++) {
+    for(y = 0; y < height; y++) {
+        for(x = 0; x < width; x++) {
 
             r = (GLubyte) (0xff * (float) x / (float) width);
             g = (GLubyte) (0xff * (float) y / (float) height);
@@ -103,8 +103,9 @@ ff_image *ff_imageFromPng(const char *filePath) {
     }
 
     /* Check signature */
-    fread(buffer, 1, PNG_BYTES_TO_CHECK, file);
-    if(png_sig_cmp(buffer, (png_size_t) 0, PNG_BYTES_TO_CHECK)) {
+    b = fread(buffer, 1, PNG_BYTES_TO_CHECK, file);
+    if(b != PNG_BYTES_TO_CHECK ||
+            png_sig_cmp(buffer, (png_size_t) 0, PNG_BYTES_TO_CHECK)) {
         fprintf(stderr,
                 "video/image/ff_imageFromPng: PNG signature in \"%s\"\n",
                 filePath);
@@ -186,8 +187,8 @@ void ff_copyPixels(GLubyte *src, int sw, int sh,
             sw, sh, dw, dh, pixelSize);
 #endif
 
-    for(x = 0; x < dw; x++) {
-        for(y = 0; y < dh; y++) {
+    for(y = 0; y < dh; y++) {
+        for(x = 0; x < dw; x++) {
             for(b = 0; b < pixelSize; b++) {
                 dst[dw * pixelSize * y + pixelSize * x + b] =
                     (x < sw && y < sh) ?

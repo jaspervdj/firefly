@@ -17,7 +17,7 @@ import           Foreign.C.Types
 import           Foreign.ForeignPtr
 import           Foreign.Ptr
 import           Foreign.Storable
-import System.IO.Unsafe (unsafePerformIO)
+import           System.IO.Unsafe       (unsafePerformIO)
 
 
 --------------------------------------------------------------------------------
