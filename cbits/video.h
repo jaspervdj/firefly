@@ -29,4 +29,7 @@ void ff_translate(double x, double y);
 void ff_rotate(double r);
 void ff_scale(double x, double y);
 
+void ff_pushMatrix();
+void ff_popMatrix();
+
 #endif

@@ -19,7 +19,7 @@ main = F.firefly $ do
     F.setVideoMode (800, 600)
 
     img  <- F.imageFromPng "example/acid.png"
-    font <- F.fontFromTtf "example/FreeSans.ttf" 80
+    font <- F.fontFromTtf "example/japanese.ttf" 80
     putStrLn $ "Image size: " ++ show (F.imageSize img)
 
     loop img font
@@ -29,17 +29,20 @@ main = F.firefly $ do
 loop :: F.Image -> F.Font -> IO ()
 loop img font = do
     F.flushInput
-    quit     <- F.receivedQuit
-    esc      <- F.keyDown FK.escape
-    mousePos <- F.mousePosition
-    ticks    <- F.ticks
+    quit       <- F.receivedQuit
+    esc        <- F.keyDown FK.escape
+    mousePos   <- F.mousePosition
+    ticks      <- F.ticks
+    screenSize <- F.screenSize
 
     F.frame $ do
-        F.translate $ F.fromInts (50, 80)
-        F.drawString font "λf.(λx.f (x x)) (λx.f (x x))"
-        F.translate $ F.fromInts (-50, -80)
+        F.pushMatrix $ do
+            let (sw, sh) = screenSize
+            F.translate $ F.fromInts (- (ticks `div` 3 `mod` sw), sh - 40)
+            F.drawString font "アシッドハウス"
+            F.translate $ F.fromInts (sw, 0)
+            F.drawString font "アシッドハウス"
 
-        screenSize <- F.screenSize
         F.translate $ F.fromInts screenSize ./ 2
         F.rotate $ 2 * pi * fromIntegral ticks / 1000
         F.drawImageCentered img

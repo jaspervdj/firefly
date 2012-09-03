@@ -141,3 +141,11 @@ void ff_rotate(double r) {
 void ff_scale(double x, double y) {
     glScaled(x, y, 1.0f);
 }
+
+void ff_pushMatrix() {
+    glPushMatrix();
+}
+
+void ff_popMatrix() {
+    glPopMatrix();
+}

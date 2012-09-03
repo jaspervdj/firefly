@@ -16,6 +16,8 @@ module Firefly.Video
     , translate
     , rotate
     , scale
+
+    , pushMatrix
     ) where
 
 
@@ -61,6 +63,8 @@ foreign import ccall unsafe "ff_translate" ff_translate
     :: CDouble -> CDouble -> IO ()
 foreign import ccall unsafe "ff_rotate" ff_rotate :: CDouble -> IO ()
 foreign import ccall unsafe "ff_scale" ff_scale :: CDouble -> CDouble -> IO ()
+foreign import ccall unsafe "ff_pushMatrix" ff_pushMatrix :: IO ()
+foreign import ccall unsafe "ff_popMatrix" ff_popMatrix :: IO ()
 
 
 --------------------------------------------------------------------------------
@@ -105,11 +109,13 @@ vertex (Vector x y) = ff_vertex (realToFrac x) (realToFrac y)
 --------------------------------------------------------------------------------
 drawImage :: Image -> IO ()
 drawImage (Image fptr) = withForeignPtr fptr ff_drawImage
+{-# INLINE drawImage #-}
 
 
 --------------------------------------------------------------------------------
 drawImageCentered :: Image -> IO ()
 drawImageCentered (Image fptr) = withForeignPtr fptr ff_drawImageCentered
+{-# INLINE drawImageCentered #-}
 
 
 --------------------------------------------------------------------------------
@@ -145,3 +151,14 @@ rotate r = ff_rotate (realToFrac r)
 scale :: Vector -> IO ()
 scale (Vector x y) = ff_scale (realToFrac x) (realToFrac y)
 {-# INLINE scale #-}
+
+
+--------------------------------------------------------------------------------
+-- | Pushes the current transformation matrix on the stack, executes the given
+-- block of code and then pops the matrix again.
+pushMatrix :: IO () -> IO ()
+pushMatrix block = do
+    ff_pushMatrix
+    block
+    ff_popMatrix
+{-# INLINE pushMatrix #-}
