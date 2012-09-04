@@ -114,13 +114,14 @@ void ff_drawImageDebug(ff_image *image) {
     glEnd();
 }
 
-void ff_drawString(ff_font *font, const Uint32 *string, int stringLength) {
+void ff_drawString(ff_font *font,
+        const unsigned long *string, int stringLength) {
     int i;
     ff_glyph *glyph;
 
     glPushMatrix();
     for(i = 0; i < stringLength; i++) {
-        glyph = ff_fontLookupGlyph(font, (int) string[i]);
+        glyph = ff_fontLookupGlyph(font, string[i]);
 
         glTranslatef((GLfloat) glyph->left, (GLfloat) -glyph->top, 0.0f);
         ff_drawImage(glyph->image);
@@ -148,4 +149,12 @@ void ff_pushMatrix() {
 
 void ff_popMatrix() {
     glPopMatrix();
+}
+
+void ff_setColor(double r, double g, double b, double a) {
+    glColor4d(r, g, b, a);
+}
+
+void ff_getColor(double *rgba) {
+    glGetDoublev(GL_CURRENT_COLOR, rgba);
 }

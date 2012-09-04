@@ -18,20 +18,25 @@ module Firefly.Video
     , scale
 
     , pushMatrix
+
+    , setColor
+    , getColor
     ) where
 
 
 --------------------------------------------------------------------------------
-import           Data.Char               (ord)
-import           Data.Word               (Word32)
+import           Control.Applicative    ((<$>))
+import           Data.Char              (ord)
 import           Foreign.C.Types
 import           Foreign.ForeignPtr
 import           Foreign.Marshal.Array
 import           Foreign.Ptr
+import           Foreign.Storable
 
 
 --------------------------------------------------------------------------------
 import           Firefly.Vector
+import           Firefly.Video.Color
 import           Firefly.Video.Internal
 
 
@@ -58,13 +63,17 @@ foreign import ccall unsafe "ff_drawImageCentered" ff_drawImageCentered
 foreign import ccall unsafe "ff_drawImageDebug" ff_drawImageDebug
     :: Ptr CImage -> IO ()
 foreign import ccall unsafe "ff_drawString" ff_drawString
-    :: Ptr CFont -> Ptr a -> CInt -> IO ()
+    :: Ptr CFont -> Ptr CULong -> CInt -> IO ()
 foreign import ccall unsafe "ff_translate" ff_translate
     :: CDouble -> CDouble -> IO ()
 foreign import ccall unsafe "ff_rotate" ff_rotate :: CDouble -> IO ()
 foreign import ccall unsafe "ff_scale" ff_scale :: CDouble -> CDouble -> IO ()
 foreign import ccall unsafe "ff_pushMatrix" ff_pushMatrix :: IO ()
 foreign import ccall unsafe "ff_popMatrix" ff_popMatrix :: IO ()
+foreign import ccall unsafe "ff_setColor" ff_setColor
+    :: CDouble -> CDouble -> CDouble -> CDouble -> IO ()
+foreign import ccall unsafe "ff_getColor" ff_getColor
+    :: Ptr CDouble -> IO ()
 
 
 --------------------------------------------------------------------------------
@@ -130,7 +139,7 @@ drawString (Font fptr) string =
         withArrayLen codepoints $ \strlen str ->
             ff_drawString ptr str (fromIntegral strlen)
   where
-    codepoints :: [Word32]
+    codepoints :: [CULong]
     codepoints = map (fromIntegral . ord) string
 
 
@@ -162,3 +171,22 @@ pushMatrix block = do
     block
     ff_popMatrix
 {-# INLINE pushMatrix #-}
+
+
+--------------------------------------------------------------------------------
+setColor :: Color -> IO ()
+setColor (Color r g b a) = ff_setColor
+    (realToFrac r) (realToFrac g) (realToFrac b) (realToFrac a)
+{-# INLINE setColor #-}
+
+
+--------------------------------------------------------------------------------
+getColor :: IO Color
+getColor = allocaArray 4 $ \ptr -> do
+    ff_getColor ptr
+    r <- realToFrac <$> peek ptr
+    g <- realToFrac <$> peekElemOff ptr 1
+    b <- realToFrac <$> peekElemOff ptr 2
+    a <- realToFrac <$> peekElemOff ptr 3
+    return $ Color r g b a
+{-# INLINE getColor #-}

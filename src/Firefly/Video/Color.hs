@@ -4,6 +4,9 @@ module Firefly.Video.Color
     , fromRgb
     , fromRgba
     , fromHsv
+
+    , white
+    , black
     ) where
 
 
@@ -48,3 +51,15 @@ fromHsv h s v
     q = v * (1 - s * f)
     t = v * (1 - s * (1 - f))
 {-# INLINE fromHsv #-}
+
+
+--------------------------------------------------------------------------------
+white :: Color
+white = fromRgb 1 1 1
+{-# INLINE white #-}
+
+
+--------------------------------------------------------------------------------
+black :: Color
+black = fromRgb 1 1 1
+{-# INLINE black #-}
