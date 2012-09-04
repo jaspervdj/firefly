@@ -247,11 +247,10 @@ import           Firefly.Input.Internal
 
 
 --------------------------------------------------------------------------------
-#include <SDL/SDL.h>
+#include <SDL.h>
 
 
 --------------------------------------------------------------------------------
-
 #{enum Key, Key, unknown = SDLK_UNKNOWN}
 {-# INLINE unknown #-}
 #{enum Key, Key, first = SDLK_FIRST}

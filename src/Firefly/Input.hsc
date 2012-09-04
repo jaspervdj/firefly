@@ -8,6 +8,7 @@ module Firefly.Input
     , receivedQuit
     , keyDown
     , mousePosition
+    , mouseButtonDown
     ) where
 
 
@@ -29,6 +30,8 @@ foreign import ccall unsafe "ff_receivedQuit" ff_receivedQuit :: IO CInt
 foreign import ccall unsafe "ff_keyDown" ff_keyDown :: CInt -> IO CInt
 foreign import ccall unsafe "ff_mouseX" ff_mouseX :: IO CInt
 foreign import ccall unsafe "ff_mouseY" ff_mouseY :: IO CInt
+foreign import ccall unsafe "ff_mouseButtonDown" ff_mouseButtonDown
+    :: CInt -> IO CInt
 
 
 --------------------------------------------------------------------------------
@@ -56,3 +59,10 @@ mousePosition = do
     x <- ff_mouseX
     y <- ff_mouseY
     return (fromIntegral x, fromIntegral y)
+
+
+--------------------------------------------------------------------------------
+mouseButtonDown :: MouseButton -> IO Bool
+mouseButtonDown (MouseButton code) = do
+    i <- ff_mouseButtonDown code
+    return $ i /= 0

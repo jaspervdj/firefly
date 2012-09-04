@@ -31,6 +31,7 @@ Library
     Firefly
     Firefly.Engine
     Firefly.Input
+    Firefly.Input.MouseButtons
     Firefly.Input.Keys
     Firefly.Vector
     Firefly.Video
