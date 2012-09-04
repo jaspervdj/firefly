@@ -43,7 +43,7 @@ fromHsv h s v
         4 -> fromRgb t p v
         _ -> fromRgb v p q
   where
-    h'  = h / 60
+    h'  = h * 6
     i   = floor h' :: Int
     f   = h' - fromIntegral i
 

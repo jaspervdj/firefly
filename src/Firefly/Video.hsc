@@ -18,6 +18,7 @@ module Firefly.Video
     , rotate
     , scale
 
+    , pushColor
     , setColor
     , getColor
     ) where
@@ -191,3 +192,11 @@ getColor = allocaArray 4 $ \ptr -> do
 
 
 --------------------------------------------------------------------------------
+-- | Pushes the current color on a stack, execute the given block of code and
+-- pops the color again.
+pushColor :: IO () -> IO ()
+pushColor block = do
+    color <- getColor
+    block
+    setColor color
+{-# INLINE pushColor #-}

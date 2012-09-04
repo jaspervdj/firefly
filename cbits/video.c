@@ -59,7 +59,6 @@ void ff_vertex(double x, double y) {
 }
 
 void ff_drawImage(ff_image *image) {
-    glColor3f(1.0f, 1.0f, 1.0f);
     glEnable(GL_TEXTURE_2D);
     glBindTexture(GL_TEXTURE_2D, image->texture);
 

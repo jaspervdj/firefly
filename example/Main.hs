@@ -3,13 +3,14 @@ module Main where
 
 
 --------------------------------------------------------------------------------
-import           Control.Concurrent (threadDelay)
-import           Control.Monad      (forever)
+import           Control.Concurrent         (threadDelay)
+import           Control.Monad              (forever)
 
 
 --------------------------------------------------------------------------------
-import qualified Firefly            as F
-import qualified Firefly.Input.Keys as FK
+import qualified Firefly                    as F
+import qualified Firefly.Input.Keys         as FK
+import qualified Firefly.Input.MouseButtons as FMB
 import           Firefly.Vector
 
 
@@ -19,7 +20,7 @@ main = F.firefly $ do
     F.setVideoMode (800, 600)
 
     img  <- F.imageFromPng "example/acid.png"
-    font <- F.fontFromTtf "example/japanese.ttf" 80
+    font <- F.fontFromTtf "example/FreeSans.ttf" 80
     putStrLn $ "Image size: " ++ show (F.imageSize img)
 
     loop img font
@@ -29,24 +30,28 @@ main = F.firefly $ do
 loop :: F.Image -> F.Font -> IO ()
 loop img font = do
     F.flushInput
-    quit       <- F.receivedQuit
-    esc        <- F.keyDown FK.escape
-    mousePos   <- F.mousePosition
-    ticks      <- F.ticks
-    screenSize <- F.screenSize
+    quit       <- F.hasReceivedQuit
+    esc        <- F.isKeyDown FK.escape
+    mousePos   <- F.getMousePosition
+    ticks      <- F.getTicks
+    screenSize <- F.getScreenSize
+
+    let ticks' = fromIntegral (ticks `mod` 2000) / 2000
 
     F.frame $ do
-        F.pushMatrix $ do
+        F.pushMatrix $ F.pushColor $ do
             let (sw, sh) = screenSize
-            F.translate $ F.fromInts (- (ticks `div` 3 `mod` sw), sh - 40)
-            F.drawString font "アシッドハウス"
+            F.setColor $ F.fromHsv ticks' 0.8 1
+            F.translate $
+                F.Vector (- ticks' * fromIntegral sw) (fromIntegral sh - 40)
+            F.drawString font "ACIIID"
             F.translate $ F.fromInts (sw, 0)
-            F.drawString font "アシッドハウス"
+            F.drawString font "ACIIID"
 
         F.translate $ F.fromInts screenSize ./ 2
-        F.rotate $ 2 * pi * fromIntegral ticks / 1000
+        F.rotate $ 2 * pi * ticks'
         F.drawImageCentered img
-        
+
         -- F.drawImageDebug img
 
     F.delay 10
