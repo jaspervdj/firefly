@@ -17,7 +17,7 @@ void ff_quit(void) {
     SDL_Quit();
 }
 
-int ff_ticks(void) {
+int ff_getTicks(void) {
     return SDL_GetTicks();
 }
 

@@ -2,7 +2,7 @@
 {-# LANGUAGE ForeignFunctionInterface #-}
 module Firefly.Video
     ( setVideoMode
-    , screenSize
+    , getScreenSize
     , frame
 
     , drawLine
@@ -13,11 +13,10 @@ module Firefly.Video
 
     , drawString
 
+    , pushMatrix
     , translate
     , rotate
     , scale
-
-    , pushMatrix
 
     , setColor
     , getColor
@@ -47,9 +46,8 @@ import           Firefly.Video.Internal
 --------------------------------------------------------------------------------
 foreign import ccall unsafe "ff_setVideoMode" ff_setVideoMode
     :: CInt -> CInt -> IO ()
-foreign import ccall unsafe "ff_screenWidth" ff_screenWidth :: IO CInt
-foreign import ccall unsafe "ff_screenHeight" ff_screenHeight
-    :: IO CInt
+foreign import ccall unsafe "ff_getScreenWidth" ff_getScreenWidth :: IO CInt
+foreign import ccall unsafe "ff_getScreenHeight" ff_getScreenHeight :: IO CInt
 foreign import ccall unsafe "ff_startFrame" ff_startFrame :: IO ()
 foreign import ccall unsafe "ff_endFrame" ff_endFrame :: IO ()
 foreign import ccall unsafe "ff_startLine" ff_startLine :: IO ()
@@ -64,12 +62,12 @@ foreign import ccall unsafe "ff_drawImageDebug" ff_drawImageDebug
     :: Ptr CImage -> IO ()
 foreign import ccall unsafe "ff_drawString" ff_drawString
     :: Ptr CFont -> Ptr CULong -> CInt -> IO ()
+foreign import ccall unsafe "ff_pushMatrix" ff_pushMatrix :: IO ()
+foreign import ccall unsafe "ff_popMatrix" ff_popMatrix :: IO ()
 foreign import ccall unsafe "ff_translate" ff_translate
     :: CDouble -> CDouble -> IO ()
 foreign import ccall unsafe "ff_rotate" ff_rotate :: CDouble -> IO ()
 foreign import ccall unsafe "ff_scale" ff_scale :: CDouble -> CDouble -> IO ()
-foreign import ccall unsafe "ff_pushMatrix" ff_pushMatrix :: IO ()
-foreign import ccall unsafe "ff_popMatrix" ff_popMatrix :: IO ()
 foreign import ccall unsafe "ff_setColor" ff_setColor
     :: CDouble -> CDouble -> CDouble -> CDouble -> IO ()
 foreign import ccall unsafe "ff_getColor" ff_getColor
@@ -83,12 +81,12 @@ setVideoMode (width, height) =
 
 
 --------------------------------------------------------------------------------
-screenSize :: IO (Int, Int)
-screenSize = do
-    w <- ff_screenWidth
-    h <- ff_screenHeight
+getScreenSize :: IO (Int, Int)
+getScreenSize = do
+    w <- ff_getScreenWidth
+    h <- ff_getScreenHeight
     return (fromIntegral w, fromIntegral h)
-{-# INLINE screenSize #-}
+{-# INLINE getScreenSize #-}
 
 
 --------------------------------------------------------------------------------
@@ -144,6 +142,17 @@ drawString (Font fptr) string =
 
 
 --------------------------------------------------------------------------------
+-- | Pushes the current transformation matrix on the stack, executes the given
+-- block of code and then pops the matrix again.
+pushMatrix :: IO () -> IO ()
+pushMatrix block = do
+    ff_pushMatrix
+    block
+    ff_popMatrix
+{-# INLINE pushMatrix #-}
+
+
+--------------------------------------------------------------------------------
 translate :: Vector -> IO ()
 translate (Vector x y) = ff_translate (realToFrac x) (realToFrac y)
 {-# INLINE translate #-}
@@ -163,17 +172,6 @@ scale (Vector x y) = ff_scale (realToFrac x) (realToFrac y)
 
 
 --------------------------------------------------------------------------------
--- | Pushes the current transformation matrix on the stack, executes the given
--- block of code and then pops the matrix again.
-pushMatrix :: IO () -> IO ()
-pushMatrix block = do
-    ff_pushMatrix
-    block
-    ff_popMatrix
-{-# INLINE pushMatrix #-}
-
-
---------------------------------------------------------------------------------
 setColor :: Color -> IO ()
 setColor (Color r g b a) = ff_setColor
     (realToFrac r) (realToFrac g) (realToFrac b) (realToFrac a)
@@ -190,3 +188,6 @@ getColor = allocaArray 4 $ \ptr -> do
     a <- realToFrac <$> peekElemOff ptr 3
     return $ Color r g b a
 {-# INLINE getColor #-}
+
+
+--------------------------------------------------------------------------------

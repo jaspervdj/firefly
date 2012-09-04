@@ -27,25 +27,25 @@ void ff_flushInput(void) {
     global_mouseButtons = SDL_GetMouseState(&global_mouseX, &global_mouseY);
 }
 
-int ff_receivedQuit(void) {
+int ff_hasReceivedQuit(void) {
     return global_quit;
 }
 
-int ff_keyDown(int key) {
+int ff_isKeyDown(int key) {
     /* TODO We can probably make keyState global */
     int numkeys;
     Uint8 *keyState = SDL_GetKeyState(&numkeys);
     return (int) keyState[key];
 }
 
-int ff_mouseX(void) {
+int ff_getMouseX(void) {
     return global_mouseX;
 }
 
-int ff_mouseY(void) {
+int ff_getMouseY(void) {
     return global_mouseY;
 }
 
-int ff_mouseButtonDown(int mouseButton) {
+int ff_isMouseButtonDown(int mouseButton) {
     return SDL_BUTTON(mouseButton) & global_mouseButtons;
 }

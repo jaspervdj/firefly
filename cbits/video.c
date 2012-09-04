@@ -26,12 +26,12 @@ void ff_setVideoMode(int width, int height) {
     glMatrixMode(GL_MODELVIEW);
 }
 
-int ff_screenWidth(void) {
+int ff_getScreenWidth(void) {
     SDL_Surface *screen = SDL_GetVideoSurface();
     return screen->w;
 }
 
-int ff_screenHeight(void) {
+int ff_getScreenHeight(void) {
     SDL_Surface *screen = SDL_GetVideoSurface();
     return screen->h;
 }
@@ -131,6 +131,14 @@ void ff_drawString(ff_font *font,
     glPopMatrix();
 }
 
+void ff_pushMatrix() {
+    glPushMatrix();
+}
+
+void ff_popMatrix() {
+    glPopMatrix();
+}
+
 void ff_translate(double x, double y) {
     glTranslated(x, y, 0.0f);
 }
@@ -141,14 +149,6 @@ void ff_rotate(double r) {
 
 void ff_scale(double x, double y) {
     glScaled(x, y, 1.0f);
-}
-
-void ff_pushMatrix() {
-    glPushMatrix();
-}
-
-void ff_popMatrix() {
-    glPopMatrix();
 }
 
 void ff_setColor(double r, double g, double b, double a) {

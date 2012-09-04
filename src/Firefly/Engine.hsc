@@ -3,7 +3,7 @@
 {-# LANGUAGE ForeignFunctionInterface #-}
 module Firefly.Engine
     ( firefly
-    , ticks
+    , getTicks
     , delay
     ) where
 
@@ -18,10 +18,10 @@ import           Prelude         hiding (init)
 
 
 --------------------------------------------------------------------------------
-foreign import ccall unsafe "ff_init"  ff_init  :: IO ()
-foreign import ccall unsafe "ff_quit"  ff_quit  :: IO ()
-foreign import ccall unsafe "ff_ticks" ff_ticks :: IO CInt
-foreign import ccall unsafe "ff_delay" ff_delay :: CInt -> IO ()
+foreign import ccall unsafe "ff_init" ff_init  :: IO ()
+foreign import ccall unsafe "ff_quit" ff_quit  :: IO ()
+foreign import ccall unsafe "ff_getTicks" ff_getTicks :: IO CInt
+foreign import ccall unsafe "ff_delay"ff_delay :: CInt -> IO ()
 
 
 --------------------------------------------------------------------------------
@@ -42,9 +42,9 @@ firefly block = do
 --------------------------------------------------------------------------------
 -- | Get the number of ticks (milliseconds) that have passed since the
 -- initialization of the engine.
-ticks :: IO Int
-ticks = fmap fromIntegral $ ff_ticks
-{-# INLINE ticks #-}
+getTicks :: IO Int
+getTicks = fmap fromIntegral $ ff_getTicks
+{-# INLINE getTicks #-}
 
 
 --------------------------------------------------------------------------------

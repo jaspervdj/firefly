@@ -3,10 +3,10 @@
 
 void ff_flushInput(void);
 
-int ff_receivedQuit(void);
-int ff_keyDown(int key);
-int ff_mouseX(void);
-int ff_mouseY(void);
-int ff_mouseButtonDown(int mouseButton);
+int ff_hasReceivedQuit(void);
+int ff_isKeyDown(int key);
+int ff_getMouseX(void);
+int ff_getMouseY(void);
+int ff_isMouseButtonDown(int mouseButton);
 
 #endif

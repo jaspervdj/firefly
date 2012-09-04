@@ -5,10 +5,10 @@ module Firefly.Input
     
     , flushInput
 
-    , receivedQuit
-    , keyDown
-    , mousePosition
-    , mouseButtonDown
+    , hasReceivedQuit
+    , isKeyDown
+    , getMousePosition
+    , isMouseButtonDown
     ) where
 
 
@@ -26,43 +26,49 @@ import           Firefly.Input.Internal
 
 --------------------------------------------------------------------------------
 foreign import ccall unsafe "ff_flushInput" ff_flushInput :: IO ()
-foreign import ccall unsafe "ff_receivedQuit" ff_receivedQuit :: IO CInt
-foreign import ccall unsafe "ff_keyDown" ff_keyDown :: CInt -> IO CInt
-foreign import ccall unsafe "ff_mouseX" ff_mouseX :: IO CInt
-foreign import ccall unsafe "ff_mouseY" ff_mouseY :: IO CInt
-foreign import ccall unsafe "ff_mouseButtonDown" ff_mouseButtonDown
+foreign import ccall unsafe "ff_hashasReceivedQuit" ff_hasReceivedQuit
+    :: IO CInt
+foreign import ccall unsafe "ff_isKeyDown" ff_isKeyDown :: CInt -> IO CInt
+foreign import ccall unsafe "ff_getMouseX" ff_getMouseX :: IO CInt
+foreign import ccall unsafe "ff_getMouseY" ff_getMouseY :: IO CInt
+foreign import ccall unsafe "ff_isMouseButtonDown" ff_isMouseButtonDown
     :: CInt -> IO CInt
 
 
 --------------------------------------------------------------------------------
 flushInput :: IO ()
 flushInput = ff_flushInput
+{-# INLINE flushInput #-}
 
 
 --------------------------------------------------------------------------------
-receivedQuit :: IO Bool
-receivedQuit = do
-    i <- ff_receivedQuit
+hasReceivedQuit :: IO Bool
+hasReceivedQuit = do
+    i <- ff_hasReceivedQuit
     return $ i /= 0
+{-# INLINE hasReceivedQuit #-}
 
 
 --------------------------------------------------------------------------------
-keyDown :: Key -> IO Bool
-keyDown (Key code) = do
-    i <- ff_keyDown code
+isKeyDown :: Key -> IO Bool
+isKeyDown (Key code) = do
+    i <- ff_isKeyDown code
     return $ i /= 0
+{-# INLINE isKeyDown #-}
 
 
 --------------------------------------------------------------------------------
-mousePosition :: IO (Int, Int)
-mousePosition = do
-    x <- ff_mouseX
-    y <- ff_mouseY
+getMousePosition :: IO (Int, Int)
+getMousePosition = do
+    x <- ff_getMouseX
+    y <- ff_getMouseY
     return (fromIntegral x, fromIntegral y)
+{-# INLINE getMousePosition #-}
 
 
 --------------------------------------------------------------------------------
-mouseButtonDown :: MouseButton -> IO Bool
-mouseButtonDown (MouseButton code) = do
-    i <- ff_mouseButtonDown code
+isMouseButtonDown :: MouseButton -> IO Bool
+isMouseButtonDown (MouseButton code) = do
+    i <- ff_isMouseButtonDown code
     return $ i /= 0
+{-# INLINE isMouseButtonDown #-}

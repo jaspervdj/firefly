@@ -4,7 +4,7 @@
 void ff_init(void);
 void ff_quit(void);
 
-int ff_ticks(void);
+int ff_getTicks(void);
 void ff_delay(int ms);
 
 #endif
