@@ -22,6 +22,7 @@ foreign import ccall unsafe "ff_playMusic" ff_playMusic
 
 
 --------------------------------------------------------------------------------
+-- | Loop mode for 'playMusic'
 data Loop
     = Loop Int     -- ^ Loop N times
     | DontLoop     -- ^ Just play once
@@ -37,6 +38,11 @@ fromLoop LoopForever = -1
 
 
 --------------------------------------------------------------------------------
+-- | Play some background music. This stops the previous background music (if
+-- any) from playing.
+--
+-- Supported formats depend on your platform and version of SDL_mixer, but WAV,
+-- OGG and MP3 should be a safe bet.
 playMusic :: FilePath -> Loop -> IO ()
 playMusic filePath l = withCString filePath $ \str ->
     ff_playMusic str (fromLoop l)

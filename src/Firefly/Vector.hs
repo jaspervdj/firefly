@@ -1,4 +1,6 @@
 --------------------------------------------------------------------------------
+-- | Small module for vector maths. A Vector usually describes a point in the 2D
+-- space, or a difference between two points.
 module Firefly.Vector
     ( Vector (..)
     , (.+.)
