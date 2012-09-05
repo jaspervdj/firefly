@@ -149,3 +149,24 @@ ff_glyph *ff_fontLookupGlyph(ff_font *font, unsigned long codepoint) {
         return glyph;
     }
 }
+
+double ff_fontStringWidth(ff_font *font,
+        const unsigned long *string, int stringLength) {
+    double width = 0;
+    int i;
+    ff_glyph *glyph;
+
+    /* Take the advance of each character */
+    for(i = 0; i + 1 < stringLength; i++) {
+        glyph = ff_fontLookupGlyph(font, string[i]);
+        width += (double) glyph->advance;
+    }
+
+    /* And the width of the last */
+    if(i < stringLength) {
+        glyph = ff_fontLookupGlyph(font, string[i]);
+        width += (double) glyph->image->width;
+    }
+
+    return width;
+}

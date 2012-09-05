@@ -26,7 +26,6 @@ module Firefly.Video
 
 --------------------------------------------------------------------------------
 import           Control.Applicative    ((<$>))
-import           Data.Char              (ord)
 import           Foreign.C.Types
 import           Foreign.ForeignPtr
 import           Foreign.Marshal.Array
@@ -135,11 +134,8 @@ drawImageDebug (Image fptr) = withForeignPtr fptr ff_drawImageDebug
 drawString :: Font -> String -> IO ()
 drawString (Font fptr) string =
     withForeignPtr fptr $ \ptr ->
-        withArrayLen codepoints $ \strlen str ->
-            ff_drawString ptr str (fromIntegral strlen)
-  where
-    codepoints :: [CULong]
-    codepoints = map (fromIntegral . ord) string
+        withUnicode string $ ff_drawString ptr
+{-# INLINE drawString #-}
 
 
 --------------------------------------------------------------------------------

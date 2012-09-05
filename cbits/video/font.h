@@ -42,4 +42,7 @@ void ff_fontFree(ff_font *font);
 ff_glyph *ff_fontLoadGlyph(ff_font *font, unsigned long codepoint);
 ff_glyph *ff_fontLookupGlyph(ff_font *font, unsigned long codepoint);
 
+double ff_fontStringWidth(ff_font *font,
+        const unsigned long *string, int stringLength);
+
 #endif
