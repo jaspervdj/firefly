@@ -1,6 +1,7 @@
 --------------------------------------------------------------------------------
 module Firefly
-    ( module Firefly.Engine
+    ( module Firefly.Audio
+    , module Firefly.Engine
     , module Firefly.Input
     , module Firefly.Vector
     , module Firefly.Video
@@ -11,6 +12,7 @@ module Firefly
 
 
 --------------------------------------------------------------------------------
+import Firefly.Audio
 import Firefly.Engine
 import Firefly.Input
 import Firefly.Vector

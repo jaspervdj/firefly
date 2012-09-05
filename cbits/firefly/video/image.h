@@ -1,5 +1,5 @@
-#ifndef FF_VIDEO_IMAGE_H
-#define FF_VIDEO_IMAGE_H
+#ifndef FIREFLY_VIDEO_IMAGE_H
+#define FIREFLY_VIDEO_IMAGE_H
 
 #include <GL/gl.h>
 

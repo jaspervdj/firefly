@@ -5,7 +5,7 @@ module Firefly.Vector
     , (.-.)
     , (./)
     , neg
-    
+
     , len
 
     , fromPolar

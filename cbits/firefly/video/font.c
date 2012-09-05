@@ -1,4 +1,4 @@
-#include "video/font.h"
+#include "firefly/video/font.h"
 
 ff_glyph *ff_glyphFromGlyphSlot(FT_GlyphSlot glyphSlot) {
     ff_glyph *glyph;
@@ -11,7 +11,7 @@ ff_glyph *ff_glyphFromGlyphSlot(FT_GlyphSlot glyphSlot) {
     glyph->advance = (float) glyphSlot->advance.x / 64;
     glyph->left = (float) glyphSlot->metrics.horiBearingX / 64;
     glyph->top = (float) glyphSlot->metrics.horiBearingY / 64;
-    
+
     GLubyte *pixels = malloc(width * height * 2 * sizeof(GLubyte));
 
     for(y = 0; y < height; y++) {
@@ -120,7 +120,7 @@ ff_glyph *ff_fontLoadGlyph(ff_font *font, unsigned long codepoint) {
 }
 
 ff_glyph *ff_fontLookupGlyph(ff_font *font, unsigned long codepoint) {
-    int i = (int) (codepoint % font->numGlyphNodes); 
+    int i = (int) (codepoint % font->numGlyphNodes);
     ff_glyphNode *node;
     ff_glyph *glyph;
 
@@ -128,7 +128,7 @@ ff_glyph *ff_fontLookupGlyph(ff_font *font, unsigned long codepoint) {
 
     /* No root glyph node, load */
     if(!node) {
-        glyph = ff_fontLoadGlyph(font, codepoint); 
+        glyph = ff_fontLoadGlyph(font, codepoint);
         font->glyphNodes[i] = ff_glyphNodeCreate(codepoint, glyph);
         return glyph;
 

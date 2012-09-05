@@ -1,10 +1,10 @@
-#ifndef FF_VIDEO_FONT_H
-#define FF_VIDEO_FONT_H
+#ifndef FIREFLY_VIDEO_FONT_H
+#define FIREFLY_VIDEO_FONT_H
 
 #include <ft2build.h>
 #include FT_FREETYPE_H
 
-#include "video/image.h"
+#include "firefly/video/image.h"
 
 typedef struct {
     ff_image *image;

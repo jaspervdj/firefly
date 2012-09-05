@@ -20,8 +20,10 @@ main = F.firefly $ do
     F.setVideoMode (800, 600)
 
     img  <- F.imageFromPng "example/acid.png"
-    font <- F.fontFromTtf "example/FreeSans.ttf" 80
+    font <- F.fontFromTtf "example/japanese.ttf" 80
     putStrLn $ "Image size: " ++ show (F.imageSize img)
+
+    F.playMusic "example/music.mp3" F.DontLoop
 
     loop img font
 
@@ -42,11 +44,14 @@ loop img font = do
         F.pushMatrix $ F.pushColor $ do
             let (sw, sh) = screenSize
             F.setColor $ F.fromHsv ticks' 0.8 1
+            F.translate $ F.fromInts (sw `div` 2, 80)
+            F.drawStringCentered font "ACIIIID"
+            {-
             F.translate $
                 F.Vector (- ticks' * fromIntegral sw) (fromIntegral sh - 40)
-            F.drawString font "ACIIID"
             F.translate $ F.fromInts (sw, 0)
             F.drawString font "ACIIID"
+            -}
 
         F.translate $ F.fromInts screenSize ./ 2
         F.rotate $ 2 * pi * ticks'

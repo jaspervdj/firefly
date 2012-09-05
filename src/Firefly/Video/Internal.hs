@@ -23,7 +23,7 @@ type CImage = CChar
 
 
 --------------------------------------------------------------------------------
-newtype Image = Image (ForeignPtr CChar)
+newtype Image = Image (ForeignPtr CImage)
 
 
 --------------------------------------------------------------------------------

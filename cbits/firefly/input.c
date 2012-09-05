@@ -1,7 +1,7 @@
 #include <SDL.h>
 #include <stdio.h>
 
-#include "input.h"
+#include "firefly/input.h"
 
 /* Globals, but trust me, it's okay. */
 int global_quit = 0;

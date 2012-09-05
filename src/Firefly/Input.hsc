@@ -2,7 +2,7 @@
 {-# LANGUAGE ForeignFunctionInterface #-}
 module Firefly.Input
     ( Key
-    
+
     , flushInput
 
     , hasReceivedQuit
@@ -21,7 +21,7 @@ import           Firefly.Input.Internal
 
 
 --------------------------------------------------------------------------------
-#include "input.h"
+#include "firefly/input.h"
 
 
 --------------------------------------------------------------------------------

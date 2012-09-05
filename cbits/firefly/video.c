@@ -3,7 +3,7 @@
 #include <SDL.h>
 #include <stdio.h>
 
-#include "video.h"
+#include "firefly/video.h"
 
 void ff_setVideoMode(int width, int height) {
 #ifdef DEBUG
@@ -18,11 +18,11 @@ void ff_setVideoMode(int width, int height) {
 
     glClearColor(0.0f, 0.0f, 0.0f, 0.0f);
     glViewport(0, 0, width, height);
-     
+
     glMatrixMode(GL_PROJECTION);
     glLoadIdentity();
     glOrtho(0.0f, width, height, 0.0f, -1.0f, 1.0f);
-     
+
     glMatrixMode(GL_MODELVIEW);
 }
 
@@ -55,7 +55,7 @@ void ff_endLine(void) {
 }
 
 void ff_vertex(double x, double y) {
-    glVertex3d(x, y, 0.0f);
+    glVertex3d(x, y, 0.0d);
 }
 
 void ff_drawImage(ff_image *image) {
@@ -130,6 +130,16 @@ void ff_drawString(ff_font *font,
     glPopMatrix();
 }
 
+void ff_drawStringCentered(ff_font *font,
+        const unsigned long *string, int stringLength) {
+    double width = ff_fontStringWidth(font, string, stringLength);
+
+    glPushMatrix();
+    glTranslated(-width * 0.5d, 0.0d, 0.0d);
+    ff_drawString(font, string, stringLength);
+    glPopMatrix();
+}
+
 void ff_pushMatrix() {
     glPushMatrix();
 }
@@ -139,15 +149,15 @@ void ff_popMatrix() {
 }
 
 void ff_translate(double x, double y) {
-    glTranslated(x, y, 0.0f);
+    glTranslated(x, y, 0.0d);
 }
 
 void ff_rotate(double r) {
-    glRotated(r * 180 / M_PI, 0.0f, 0.0f, 1.0f);
+    glRotated(r * 180.0d / M_PI, 0.0d, 0.0d, 1.0d);
 }
 
 void ff_scale(double x, double y) {
-    glScaled(x, y, 1.0f);
+    glScaled(x, y, 1.0d);
 }
 
 void ff_setColor(double r, double g, double b, double a) {

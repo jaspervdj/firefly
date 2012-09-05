@@ -23,3 +23,9 @@ Outside of Haskell, Firefly depends on:
 - SDL, for pretty much anything else.
 
 It should relatively painless to install these on your operating system.
+
+Missing functionality
+---------------------
+
+If you think something is missing in this library, please create an issue on
+github.

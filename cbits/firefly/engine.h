@@ -1,5 +1,5 @@
-#ifndef FF_ENGINE_H
-#define FF_ENGINE_H
+#ifndef FIREFLY_ENGINE_H
+#define FIREFLY_ENGINE_H
 
 void ff_init(void);
 void ff_quit(void);

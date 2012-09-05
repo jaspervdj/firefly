@@ -14,6 +14,15 @@ Category:      Game
 Build-type:    Simple
 Cabal-version: >= 1.8
 
+Extra-source-files:
+  cbits/firefly/audio.h
+  cbits/firefly/audio/music.h
+  cbits/firefly/engine.h
+  cbits/firefly/input.h
+  cbits/firefly/video.h
+  cbits/firefly/video/font.h
+  cbits/firefly/video/image.h
+
 Library
   Cc-options:     -DDEBUG -Wall -ggdb
   Ghc-options:    -Wall
@@ -21,14 +30,18 @@ Library
   Include-dirs:   cbits
 
   C-sources:
-    cbits/engine.c
-    cbits/input.c
-    cbits/video.c
-    cbits/video/font.c
-    cbits/video/image.c
+    cbits/firefly/audio.c
+    cbits/firefly/audio/music.c
+    cbits/firefly/engine.c
+    cbits/firefly/input.c
+    cbits/firefly/video.c
+    cbits/firefly/video/font.c
+    cbits/firefly/video/image.c
 
   Exposed-modules:     
     Firefly
+    Firefly.Audio
+    Firefly.Audio.Music
     Firefly.Engine
     Firefly.Input
     Firefly.Input.MouseButtons
@@ -40,6 +53,7 @@ Library
     Firefly.Video.Image
 
   Other-modules:
+    Firefly.Audio.Internal
     Firefly.Input.Internal
     Firefly.Video.Internal
 
@@ -50,7 +64,8 @@ Library
     freetype2,
     gl,
     libpng,
-    sdl >= 1.2
+    sdl       >= 1.2,
+    SDL_mixer >= 1.2
 
 Executable firefly-example
   Cpp-options:    -DDEBUG

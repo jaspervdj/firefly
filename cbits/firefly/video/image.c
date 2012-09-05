@@ -2,7 +2,7 @@
 #include <stdlib.h>
 #include <png.h>
 
-#include "video/image.h"
+#include "firefly/video/image.h"
 
 ff_image *ff_imageCreate(int width, int height, int pixelSize,
         GLubyte *pixels) {

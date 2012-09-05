@@ -12,6 +12,7 @@ module Firefly.Video
     , drawImageDebug
 
     , drawString
+    , drawStringCentered
 
     , pushMatrix
     , translate
@@ -40,7 +41,7 @@ import           Firefly.Video.Internal
 
 
 --------------------------------------------------------------------------------
-#include "video.h"
+#include "firefly/video.h"
 
 
 --------------------------------------------------------------------------------
@@ -61,6 +62,8 @@ foreign import ccall unsafe "ff_drawImageCentered" ff_drawImageCentered
 foreign import ccall unsafe "ff_drawImageDebug" ff_drawImageDebug
     :: Ptr CImage -> IO ()
 foreign import ccall unsafe "ff_drawString" ff_drawString
+    :: Ptr CFont -> Ptr CULong -> CInt -> IO ()
+foreign import ccall unsafe "ff_drawStringCentered" ff_drawStringCentered
     :: Ptr CFont -> Ptr CULong -> CInt -> IO ()
 foreign import ccall unsafe "ff_pushMatrix" ff_pushMatrix :: IO ()
 foreign import ccall unsafe "ff_popMatrix" ff_popMatrix :: IO ()
@@ -133,9 +136,15 @@ drawImageDebug (Image fptr) = withForeignPtr fptr ff_drawImageDebug
 --------------------------------------------------------------------------------
 drawString :: Font -> String -> IO ()
 drawString (Font fptr) string =
-    withForeignPtr fptr $ \ptr ->
-        withUnicode string $ ff_drawString ptr
+    withForeignPtr fptr $ withUnicode string . ff_drawString
 {-# INLINE drawString #-}
+
+
+--------------------------------------------------------------------------------
+drawStringCentered :: Font -> String -> IO ()
+drawStringCentered (Font fptr) string =
+    withForeignPtr fptr $ withUnicode string . ff_drawStringCentered
+{-# INLINE drawStringCentered #-}
 
 
 --------------------------------------------------------------------------------

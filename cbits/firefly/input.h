@@ -1,5 +1,5 @@
-#ifndef FF_INPUT_H
-#define FF_INPUT_H
+#ifndef FIREFLY_INPUT_H
+#define FIREFLY_INPUT_H
 
 void ff_flushInput(void);
 
