@@ -26,7 +26,7 @@ import           Firefly.Input.Internal
 
 --------------------------------------------------------------------------------
 foreign import ccall unsafe "ff_flushInput" ff_flushInput :: IO ()
-foreign import ccall unsafe "ff_hashasReceivedQuit" ff_hasReceivedQuit
+foreign import ccall unsafe "ff_hasReceivedQuit" ff_hasReceivedQuit
     :: IO CInt
 foreign import ccall unsafe "ff_isKeyDown" ff_isKeyDown :: CInt -> IO CInt
 foreign import ccall unsafe "ff_getMouseX" ff_getMouseX :: IO CInt
