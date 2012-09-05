@@ -19,18 +19,19 @@ main :: IO ()
 main = F.firefly $ do
     F.setVideoMode (800, 600)
 
-    img  <- F.imageFromPng "example/acid.png"
-    font <- F.fontFromTtf "example/japanese.ttf" 80
-    putStrLn $ "Image size: " ++ show (F.imageSize img)
+    background  <- F.imageFromPng "example/background.png"
+    img         <- F.imageFromPng "example/acid.png"
+    font        <- F.fontFromTtf "example/japanese.ttf" 120
 
+    putStrLn $ "Image size: " ++ show (F.imageSize img)
     F.playMusic "example/music.mp3" F.DontLoop
 
-    loop img font
+    loop background img font
 
 
 --------------------------------------------------------------------------------
-loop :: F.Image -> F.Font -> IO ()
-loop img font = do
+loop :: F.Image -> F.Image -> F.Font -> IO ()
+loop background img font = do
     F.flushInput
     quit       <- F.hasReceivedQuit
     esc        <- F.isKeyDown FK.escape
@@ -38,22 +39,29 @@ loop img font = do
     ticks      <- F.getTicks
     screenSize <- F.getScreenSize
 
-    let ticks' = fromIntegral (ticks `mod` 2000) / 2000
+    let ticks' = fromIntegral (ticks `mod` 1000) / 1000
 
     F.frame $ do
-        F.pushMatrix $ F.pushColor $ do
-            let (sw, sh) = screenSize
-            F.setColor $ F.fromHsv ticks' 0.8 1
-            F.translate $ F.fromInts (sw `div` 2, 80)
-            F.drawStringCentered font "ACIIIID"
-            {-
-            F.translate $
-                F.Vector (- ticks' * fromIntegral sw) (fromIntegral sh - 40)
-            F.translate $ F.fromInts (sw, 0)
-            F.drawString font "ACIIID"
-            -}
+        let (sw, sh) = screenSize
 
-        F.translate $ F.fromInts screenSize ./ 2
+        F.pushMatrix $ do
+            F.translate $ F.Vector (- ticks' * fromIntegral sw) 0
+            F.drawImage background
+            F.translate $ F.Vector (fromIntegral sw) 0
+            F.drawImage background
+
+        F.pushMatrix $ F.pushColor $ do
+            F.translate $ F.fromInts (sw `div` 2, 120)
+
+            F.setColor $ F.fromRgba 0 0 0 0.2
+            F.drawStringCentered font "ラーメン"
+
+            F.translate $ F.fromInts (0, -5)
+            F.setColor $ F.fromHsv ticks' 0.8 1
+            F.drawStringCentered font "ラーメン"
+
+
+        F.translate $ Vector 0 80 .+. F.fromInts screenSize ./ 2
         F.rotate $ 2 * pi * ticks'
         F.drawImageCentered img
 
@@ -61,4 +69,4 @@ loop img font = do
 
     F.delay 10
 
-    if quit || esc then return () else loop img font
+    if quit || esc then return () else loop background img font
