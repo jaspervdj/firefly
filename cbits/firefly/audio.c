@@ -31,6 +31,12 @@ void ff_playMusic(const char *filePath, int loop) {
     ff_stopMusic();
 
     global_music = Mix_LoadMUS(filePath);
+
+    if(!global_music) {
+        fprintf(stderr, "audio/ff_playMusic: Couldn't load music\n");
+        return;
+    }
+
     global_musicFilePath = malloc((strlen(filePath) + 1) * sizeof(char));
     strcpy(global_musicFilePath, filePath);
 
