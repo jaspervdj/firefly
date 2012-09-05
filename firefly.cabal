@@ -16,7 +16,7 @@ Cabal-version: >= 1.8
 
 Extra-source-files:
   cbits/firefly/audio.h
-  cbits/firefly/audio/music.h
+  cbits/firefly/audio/sound.h
   cbits/firefly/engine.h
   cbits/firefly/input.h
   cbits/firefly/video.h
@@ -31,7 +31,7 @@ Library
 
   C-sources:
     cbits/firefly/audio.c
-    cbits/firefly/audio/music.c
+    cbits/firefly/audio/sound.c
     cbits/firefly/engine.c
     cbits/firefly/input.c
     cbits/firefly/video.c
@@ -41,7 +41,7 @@ Library
   Exposed-modules:     
     Firefly
     Firefly.Audio
-    Firefly.Audio.Music
+    Firefly.Audio.Sound
     Firefly.Engine
     Firefly.Input
     Firefly.Input.MouseButtons

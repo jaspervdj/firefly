@@ -22,8 +22,10 @@ main = F.firefly $ do
     background  <- F.imageFromPng "example/background.png"
     img         <- F.imageFromPng "example/acid.png"
     font        <- F.fontFromTtf "example/japanese.ttf" 120
+    sound       <- F.soundFromFile "example/sound.wav"
 
     putStrLn $ "Image size: " ++ show (F.imageSize img)
+    putStrLn $ "Sound: " ++ F.soundFilePath sound
     F.playMusic "example/musico.mp3" F.DontLoop
 
     loop background img font

@@ -1,7 +1,7 @@
 --------------------------------------------------------------------------------
 module Firefly.Audio.Internal
-    ( CMusic
-    , Music (..)
+    ( CSound
+    , Sound (..)
     ) where
 
 
@@ -11,8 +11,8 @@ import           Foreign.ForeignPtr
 
 
 --------------------------------------------------------------------------------
-type CMusic = CChar
+type CSound = CChar
 
 
 --------------------------------------------------------------------------------
-newtype Music = Music (ForeignPtr CMusic)
+newtype Sound = Sound (ForeignPtr CSound)
