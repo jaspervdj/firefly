@@ -4,12 +4,19 @@
 module Firefly.Audio
     ( Loop (..)
     , playMusic
+    , playSound
     ) where
 
 
 --------------------------------------------------------------------------------
 import           Foreign.C.Types
 import           Foreign.C.String
+import           Foreign.ForeignPtr
+import           Foreign.Ptr
+
+
+--------------------------------------------------------------------------------
+import           Firefly.Audio.Internal
 
 
 --------------------------------------------------------------------------------
@@ -19,6 +26,8 @@ import           Foreign.C.String
 --------------------------------------------------------------------------------
 foreign import ccall unsafe "ff_playMusic" ff_playMusic
     :: CString -> CInt -> IO ()
+foreign import ccall unsafe "ff_playSound" ff_playSound
+    :: Ptr CSound -> IO ()
 
 
 --------------------------------------------------------------------------------
@@ -43,6 +52,16 @@ fromLoop LoopForever = -1
 --
 -- Supported formats depend on your platform and version of SDL_mixer, but WAV,
 -- OGG and MP3 should be a safe bet.
+--
+-- This call is non-blocking.
 playMusic :: FilePath -> Loop -> IO ()
 playMusic filePath l = withCString filePath $ \str ->
     ff_playMusic str (fromLoop l)
+
+
+--------------------------------------------------------------------------------
+-- Play some sound.
+--
+-- This call is non-blocking.
+playSound :: Sound -> IO ()
+playSound (Sound fptr) = withForeignPtr fptr ff_playSound

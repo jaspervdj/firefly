@@ -42,6 +42,7 @@ Library
     Firefly
     Firefly.Audio
     Firefly.Audio.Sound
+    Firefly.Collision
     Firefly.Engine
     Firefly.Input
     Firefly.Input.MouseButtons
@@ -71,6 +72,15 @@ Executable firefly-example
   Cpp-options:    -DDEBUG
   Hs-source-dirs: example
   Main-is:        Main.hs
+
+  Build-depends:
+    base    >= 4   && < 5,
+    firefly >= 0.0 && < 0.1
+
+Executable firefly-collision
+  Cpp-options:    -DDEBUG
+  Hs-source-dirs: example
+  Main-is:        collision.hs
 
   Build-depends:
     base    >= 4   && < 5,

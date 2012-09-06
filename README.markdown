@@ -20,6 +20,7 @@ Outside of Haskell, Firefly depends on:
 - FreeType 2, for font loading;
 - libpng, for image loading;
 - OpenGL, for fast graphics;
+- SDL_mixer, for loading and playing sounds;
 - SDL, for pretty much anything else.
 
 It should relatively painless to install these on your operating system.

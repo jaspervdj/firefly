@@ -57,3 +57,7 @@ void ff_stopMusic() {
         global_musicFilePath = 0;
     }
 }
+
+void ff_playSound(ff_sound *sound) {
+    Mix_PlayChannel(-1, sound->chunk, 0);
+}
