@@ -9,6 +9,7 @@ typedef struct {
     int tw, th; /* Powers of two */
     float ttc, rtc, btc, ltc; /* Texture coordinates */
 
+    int *refcount;
     GLuint texture;
 } ff_image;
 
@@ -17,6 +18,7 @@ ff_image *ff_imageFromGradient(int width, int height);
 ff_image *ff_imageFromPng(const char *filePath);
 void ff_imageFree(ff_image *image);
 
+ff_image *ff_imageSlice(ff_image *image, int x, int y, int width, int height);
 
 GLenum ff_formatForPixelSize(int pixelSize);
 int ff_nearestPowerOfTwo(int x);

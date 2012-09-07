@@ -7,6 +7,8 @@ module Firefly.Video.Image
     , imageFromPng
 
     , imageSize
+
+    , imageSlice
     ) where
 
 
@@ -35,6 +37,8 @@ foreign import ccall unsafe "ff_imageFromPng" ff_imageFromPng
     :: CString -> IO (Ptr CImage)
 foreign import ccall "&ff_imageFree" ff_imageFree
     :: FunPtr (Ptr CImage -> IO ())
+foreign import ccall unsafe "ff_imageSlice" ff_imageSlice
+    :: Ptr CImage -> CInt -> CInt -> CInt -> CInt -> IO (Ptr CImage)
 
 
 --------------------------------------------------------------------------------
@@ -60,3 +64,15 @@ imageSize (Image fptr) = unsafePerformIO $ withForeignPtr fptr $ \ptr -> do
     w <- #{peek ff_image, width}  ptr :: IO CInt
     h <- #{peek ff_image, height} ptr :: IO CInt
     return (fromIntegral w, fromIntegral h)
+
+
+--------------------------------------------------------------------------------
+imageSlice :: (Int, Int)  -- ^ (X, Y)
+           -> (Int, Int)  -- ^ (Width, Height)
+           -> Image       -- ^ Original image
+           -> Image       -- ^ Sliced image
+imageSlice (x, y) (w, h) (Image fptr) = unsafePerformIO $
+    withForeignPtr fptr $ \ptr -> do
+        ptr' <- ff_imageSlice ptr
+            (fromIntegral x) (fromIntegral y) (fromIntegral w) (fromIntegral h)
+        Image <$> newForeignPtr ff_imageFree ptr'

@@ -26,6 +26,9 @@ ff_image *ff_imageCreate(int width, int height, int pixelSize,
     image->rtc = (float) (width) / (float) (image->tw);
     image->btc = (float) (height) / (float) (image->th);
     image->ltc = 0.0f;
+    image->refcount = malloc(sizeof(int));
+
+    *(image->refcount) = 1;
 
     glGenTextures(1, &image->texture);
     glBindTexture(GL_TEXTURE_2D, image->texture);
@@ -155,8 +158,52 @@ void ff_imageFree(ff_image *image) {
 #ifdef DEBUG
     printf("video/image/ff_imageFree(_)\n");
 #endif
-    if(image->texture) glDeleteTextures(1, &image->texture);
+
+    (*(image->refcount))--;
+
+#ifdef DEBUG
+    printf("video/image/ff_imageFree: Refcount is now: %d\n",
+            *(image->refcount));
+#endif
+
+    if(*(image->refcount) <= 0 && image->texture) {
+        free(image->refcount);
+        glDeleteTextures(1, &image->texture);
+    }
+
     free(image);
+}
+
+ff_image *ff_imageSlice(ff_image *image,
+        int x, int y, int width, int height) {
+    ff_image *sub;
+
+#ifdef DEBUG
+    printf("video/image/ff_imageSlice(_, %d, %d, %d, %d)\n",
+            x, y, width, height);
+#endif
+
+    sub = malloc(sizeof(ff_image));
+    sub->width = width;
+    sub->height = height;
+    sub->pixelSize = image->pixelSize;
+    sub->tw = image->tw;
+    sub->th = image->th;
+    sub->ttc = (float) y / (float) image->th;
+    sub->rtc = (float) (x + width) / (float) image->tw;
+    sub->btc = (float) (y + height) / (float) image->th;
+    sub->ltc = (float) x / (float) image->tw;
+    sub->refcount = image->refcount;
+    sub->texture = image->texture;
+
+    (*(sub->refcount))++;
+
+#ifdef DEBUG
+    printf("video/image/ff_imageSlice: Refcount is now: %d\n",
+            *(sub->refcount));
+#endif
+
+    return sub;
 }
 
 GLenum ff_formatForPixelSize(int pixelSize) {
