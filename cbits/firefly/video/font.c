@@ -12,16 +12,15 @@ ff_glyph *ff_glyphFromGlyphSlot(FT_GlyphSlot glyphSlot) {
     glyph->left = (float) glyphSlot->metrics.horiBearingX / 64;
     glyph->top = (float) glyphSlot->metrics.horiBearingY / 64;
 
-    GLubyte *pixels = malloc(width * height * 2 * sizeof(GLubyte));
+    GLubyte *pixels = malloc(width * height * sizeof(GLubyte));
 
     for(y = 0; y < height; y++) {
         for(x = 0; x < width; x++) {
-            pixels[y * width * 2 + x * 2] = 0xff;
-            pixels[y * width * 2 + x * 2 + 1] = bitmap.buffer[width * y + x];
+            pixels[y * width + x] = bitmap.buffer[width * y + x];
         }
     }
 
-    glyph->image = ff_imageCreate(width, height, 2, pixels);
+    glyph->image = ff_imageCreate(width, height, 1, pixels);
 
     free(pixels);
     return glyph;

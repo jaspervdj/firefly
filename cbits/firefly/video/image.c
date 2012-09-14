@@ -209,7 +209,7 @@ ff_image *ff_imageSlice(ff_image *image,
 GLenum ff_formatForPixelSize(int pixelSize) {
     switch(pixelSize) {
         case 1:
-            return GL_LUMINANCE;
+            return GL_ALPHA;
         case 2:
             return GL_LUMINANCE_ALPHA;
         case 3:
