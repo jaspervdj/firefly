@@ -5,6 +5,7 @@ module Firefly.Vector
     ( Vector (..)
     , (.+.)
     , (.-.)
+    , (.*)
     , (./)
     , neg
 
@@ -44,6 +45,12 @@ infixl 6 .+.
 (.-.) :: Vector -> Vector -> Vector
 (Vector x1 y1) .-. (Vector x2 y2) = Vector (x1 - x2) (y1 - y2)
 infixl 6 .-.
+
+
+--------------------------------------------------------------------------------
+(.*) :: Vector -> Double -> Vector
+(Vector x y) .* s = Vector (x * s) (y * s)
+infixl 7 .*
 
 
 --------------------------------------------------------------------------------
