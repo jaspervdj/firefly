@@ -4,10 +4,10 @@
 #include <ft2build.h>
 #include FT_FREETYPE_H
 
-#include "firefly/video/image.h"
+#include "firefly/video/texture.h"
 
 typedef struct {
-    ff_image *image;
+    ff_texture *texture;
     float advance;
     float top;
     float left;

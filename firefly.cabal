@@ -21,7 +21,7 @@ Extra-source-files:
   cbits/firefly/input.h
   cbits/firefly/video.h
   cbits/firefly/video/font.h
-  cbits/firefly/video/image.h
+  cbits/firefly/video/texture.h
 
 Library
   Cc-options:     -DDEBUG -Wall -ggdb
@@ -36,7 +36,7 @@ Library
     cbits/firefly/input.c
     cbits/firefly/video.c
     cbits/firefly/video/font.c
-    cbits/firefly/video/image.c
+    cbits/firefly/video/texture.c
 
   Exposed-modules:     
     Firefly
@@ -51,7 +51,7 @@ Library
     Firefly.Video
     Firefly.Video.Color
     Firefly.Video.Font
-    Firefly.Video.Image
+    Firefly.Video.Texture
 
   Other-modules:
     Firefly.Audio.Internal

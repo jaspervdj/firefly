@@ -20,14 +20,14 @@ ff_glyph *ff_glyphFromGlyphSlot(FT_GlyphSlot glyphSlot) {
         }
     }
 
-    glyph->image = ff_imageCreate(width, height, 1, pixels);
+    glyph->texture = ff_textureCreate(width, height, 1, pixels);
 
     free(pixels);
     return glyph;
 }
 
 void ff_glyphFree(ff_glyph *glyph) {
-    ff_imageFree(glyph->image);
+    ff_textureFree(glyph->texture);
     free(glyph);
 }
 
@@ -164,7 +164,7 @@ double ff_fontStringWidth(ff_font *font,
     /* And the width of the last */
     if(i < stringLength) {
         glyph = ff_fontLookupGlyph(font, string[i]);
-        width += (double) glyph->image->width;
+        width += (double) glyph->texture->width;
     }
 
     return width;

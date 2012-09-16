@@ -19,14 +19,14 @@ main :: IO ()
 main = F.firefly $ do
     F.setVideoMode (800, 600)
 
-    background  <- F.imageFromPng "example/background.png"
-    img         <- F.imageFromPng "example/acid.png"
+    background  <- F.textureFromPng "example/background.png"
+    img         <- F.textureFromPng "example/acid.png"
     font        <- F.fontFromTtf "example/japanese.ttf" 120
     sound       <- F.soundFromFile "example/sound.wav"
 
     F.playSound sound
 
-    putStrLn $ "Image size: " ++ show (F.imageSize img)
+    putStrLn $ "Image size: " ++ show (F.textureSize img)
     putStrLn $ "Sound: " ++ F.soundFilePath sound
     F.playMusic "example/music.mp3" F.DontLoop
 
@@ -34,7 +34,7 @@ main = F.firefly $ do
 
 
 --------------------------------------------------------------------------------
-loop :: F.Image -> F.Image -> F.Font -> IO ()
+loop :: F.Texture -> F.Texture -> F.Font -> IO ()
 loop background img font = do
     F.flushInput
     quit       <- F.hasReceivedQuit
@@ -50,9 +50,9 @@ loop background img font = do
 
         F.pushMatrix $ do
             F.translate $ F.Vector (- ticks' * fromIntegral sw) 0
-            F.drawImage background
+            F.drawTexture background
             F.translate $ F.Vector (fromIntegral sw) 0
-            F.drawImage background
+            F.drawTexture background
 
         F.pushMatrix $ F.pushColor $ do
             F.translate $ F.fromInts (sw `div` 2, 120)
@@ -67,9 +67,9 @@ loop background img font = do
 
         F.translate $ Vector 0 80 .+. F.fromInts screenSize ./ 2
         F.rotate $ 2 * pi * ticks'
-        F.drawImageCentered img
+        F.drawTextureCentered img
 
-        -- F.drawImageDebug img
+        -- F.drawTextureDebug img
 
     F.delay 10
 

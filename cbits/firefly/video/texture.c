@@ -2,36 +2,36 @@
 #include <stdlib.h>
 #include <png.h>
 
-#include "firefly/video/image.h"
+#include "firefly/video/texture.h"
 
-ff_image *ff_imageCreate(int width, int height, int pixelSize,
+ff_texture *ff_textureCreate(int width, int height, int pixelSize,
         GLubyte *pixels) {
-    ff_image *image;
+    ff_texture *texture;
     GLenum format;
     GLubyte *tp;
 
 #ifdef DEBUG
-    printf("video/image/ff_imageCreate(%d, %d, %d, _)\n", width, height,
+    printf("video/texture/ff_textureCreate(%d, %d, %d, _)\n", width, height,
             pixelSize);
 #endif
 
-    image = malloc(sizeof(ff_image));
+    texture = malloc(sizeof(ff_texture));
 
-    image->width = width;
-    image->height = height;
-    image->pixelSize = pixelSize;
-    image->tw = ff_nearestPowerOfTwo(width);
-    image->th = ff_nearestPowerOfTwo(height);
-    image->ttc = 0.0f;
-    image->rtc = (float) (width) / (float) (image->tw);
-    image->btc = (float) (height) / (float) (image->th);
-    image->ltc = 0.0f;
-    image->refcount = malloc(sizeof(int));
+    texture->width = width;
+    texture->height = height;
+    texture->pixelSize = pixelSize;
+    texture->tw = ff_nearestPowerOfTwo(width);
+    texture->th = ff_nearestPowerOfTwo(height);
+    texture->ttc = 0.0f;
+    texture->rtc = (float) (width) / (float) (texture->tw);
+    texture->btc = (float) (height) / (float) (texture->th);
+    texture->ltc = 0.0f;
+    texture->refcount = malloc(sizeof(int));
 
-    *(image->refcount) = 1;
+    *(texture->refcount) = 1;
 
-    glGenTextures(1, &image->texture);
-    glBindTexture(GL_TEXTURE_2D, image->texture);
+    glGenTextures(1, &texture->texture);
+    glBindTexture(GL_TEXTURE_2D, texture->texture);
 
     /* TODO: GL_NEAREST is more pixel-perfect, GL_LINEAR is nicer, possibly let
      * the user choose? */
@@ -42,22 +42,22 @@ ff_image *ff_imageCreate(int width, int height, int pixelSize,
 
     /* Write pixel data to video memory */
 
-    tp = malloc(image->tw * image->th * pixelSize * sizeof(GLubyte));
-    ff_copyPixels(pixels, width, height, tp, image->tw, image->th, pixelSize);
+    tp = malloc(texture->tw * texture->th * pixelSize * sizeof(GLubyte));
+    ff_copyPixels(pixels, width, height, tp, texture->tw, texture->th, pixelSize);
 
-    glTexImage2D(GL_TEXTURE_2D, 0, format, image->tw, image->th, 0, format,
+    glTexImage2D(GL_TEXTURE_2D, 0, format, texture->tw, texture->th, 0, format,
             GL_UNSIGNED_BYTE, (GLvoid *) tp);
 
     free(tp);
 
-    return image;
+    return texture;
 }
 
-ff_image *ff_imageFromGradient(int width, int height) {
+ff_texture *ff_textureFromGradient(int width, int height) {
     GLubyte *pixels;
     int x, y;
     int r, g, b;
-    ff_image *image;
+    ff_texture *texture;
 
     pixels = malloc(width * height * 3 * sizeof(GLubyte));
     for(y = 0; y < height; y++) {
@@ -73,14 +73,14 @@ ff_image *ff_imageFromGradient(int width, int height) {
         }
     }
 
-    image = ff_imageCreate(width, height, 3, pixels);
+    texture = ff_textureCreate(width, height, 3, pixels);
     free(pixels);
-    return image;
+    return texture;
 }
 
 #define PNG_BYTES_TO_CHECK 4
 
-ff_image *ff_imageFromPng(const char *filePath) {
+ff_texture *ff_textureFromPng(const char *filePath) {
     FILE *file;
     png_byte buffer[PNG_BYTES_TO_CHECK];
     png_structp pngp;
@@ -91,16 +91,16 @@ ff_image *ff_imageFromPng(const char *filePath) {
     int x, y, b;
     int pixelSize;
     GLubyte *pixels;
-    ff_image *image;
+    ff_texture *texture;
 
 #ifdef DEBUG
-    printf("video/image/ff_imageFromPng(\"%s\")\n", filePath);
+    printf("video/texture/ff_textureFromPng(\"%s\")\n", filePath);
 #endif
 
     /* Open PNG file */
     file = fopen(filePath, "rb");
     if(!file) {
-        fprintf(stderr, "video/image/ff_imageFromPng: Could not open \"%s\"\n",
+        fprintf(stderr, "video/texture/ff_textureFromPng: Could not open \"%s\"\n",
                 filePath);
         return 0;
     }
@@ -110,7 +110,7 @@ ff_image *ff_imageFromPng(const char *filePath) {
     if(b != PNG_BYTES_TO_CHECK ||
             png_sig_cmp(buffer, (png_size_t) 0, PNG_BYTES_TO_CHECK)) {
         fprintf(stderr,
-                "video/image/ff_imageFromPng: PNG signature in \"%s\"\n",
+                "video/texture/ff_textureFromPng: PNG signature in \"%s\"\n",
                 filePath);
         fclose(file);
         return 0;
@@ -147,59 +147,59 @@ ff_image *ff_imageFromPng(const char *filePath) {
     png_destroy_read_struct(&pngp, &infop, 0);
     fclose(file);
 
-    image = ff_imageCreate(width, height, pixelSize, pixels);
+    texture = ff_textureCreate(width, height, pixelSize, pixels);
 
     free(pixels);
 
-    return image;
+    return texture;
 }
 
-void ff_imageFree(ff_image *image) {
+void ff_textureFree(ff_texture *texture) {
 #ifdef DEBUG
-    printf("video/image/ff_imageFree(_)\n");
+    printf("video/texture/ff_textureFree(_)\n");
 #endif
 
-    (*(image->refcount))--;
+    (*(texture->refcount))--;
 
 #ifdef DEBUG
-    printf("video/image/ff_imageFree: Refcount is now: %d\n",
-            *(image->refcount));
+    printf("video/texture/ff_textureFree: Refcount is now: %d\n",
+            *(texture->refcount));
 #endif
 
-    if(*(image->refcount) <= 0 && image->texture) {
-        free(image->refcount);
-        glDeleteTextures(1, &image->texture);
+    if(*(texture->refcount) <= 0 && texture->texture) {
+        free(texture->refcount);
+        glDeleteTextures(1, &texture->texture);
     }
 
-    free(image);
+    free(texture);
 }
 
-ff_image *ff_imageSlice(ff_image *image,
+ff_texture *ff_textureSlice(ff_texture *texture,
         int x, int y, int width, int height) {
-    ff_image *sub;
+    ff_texture *sub;
 
 #ifdef DEBUG
-    printf("video/image/ff_imageSlice(_, %d, %d, %d, %d)\n",
+    printf("video/texture/ff_textureSlice(_, %d, %d, %d, %d)\n",
             x, y, width, height);
 #endif
 
-    sub = malloc(sizeof(ff_image));
+    sub = malloc(sizeof(ff_texture));
     sub->width = width;
     sub->height = height;
-    sub->pixelSize = image->pixelSize;
-    sub->tw = image->tw;
-    sub->th = image->th;
-    sub->ttc = (float) y / (float) image->th;
-    sub->rtc = (float) (x + width) / (float) image->tw;
-    sub->btc = (float) (y + height) / (float) image->th;
-    sub->ltc = (float) x / (float) image->tw;
-    sub->refcount = image->refcount;
-    sub->texture = image->texture;
+    sub->pixelSize = texture->pixelSize;
+    sub->tw = texture->tw;
+    sub->th = texture->th;
+    sub->ttc = (float) y / (float) texture->th;
+    sub->rtc = (float) (x + width) / (float) texture->tw;
+    sub->btc = (float) (y + height) / (float) texture->th;
+    sub->ltc = (float) x / (float) texture->tw;
+    sub->refcount = texture->refcount;
+    sub->texture = texture->texture;
 
     (*(sub->refcount))++;
 
 #ifdef DEBUG
-    printf("video/image/ff_imageSlice: Refcount is now: %d\n",
+    printf("video/texture/ff_textureSlice: Refcount is now: %d\n",
             *(sub->refcount));
 #endif
 
@@ -230,7 +230,7 @@ void ff_copyPixels(GLubyte *src, int sw, int sh,
     int x, y, b;
 
 #ifdef DEBUG
-    printf("video/image/ff_copyPixels(_, %d, %d, _, %d, %d, %d)\n",
+    printf("video/texture/ff_copyPixels(_, %d, %d, _, %d, %d, %d)\n",
             sw, sh, dw, dh, pixelSize);
 #endif
 

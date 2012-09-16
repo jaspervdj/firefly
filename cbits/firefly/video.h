@@ -2,7 +2,7 @@
 #define FIREFLY_VIDEO_H
 
 #include "firefly/video/font.h"
-#include "firefly/video/image.h"
+#include "firefly/video/texture.h"
 
 void ff_setVideoMode(int width, int height);
 
@@ -17,9 +17,9 @@ void ff_endLine(void);
 
 void ff_vertex(double x, double y);
 
-void ff_drawImage(ff_image *image);
-void ff_drawImageCentered(ff_image *image);
-void ff_drawImageDebug(ff_image *image);
+void ff_drawTexture(ff_texture *texture);
+void ff_drawTextureCentered(ff_texture *texture);
+void ff_drawTextureDebug(ff_texture *texture);
 
 void ff_drawString(ff_font *font,
         const unsigned long *string, int stringLength);

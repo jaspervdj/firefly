@@ -9,7 +9,7 @@ module Firefly
     , module Firefly.Video
     , module Firefly.Video.Color
     , module Firefly.Video.Font
-    , module Firefly.Video.Image
+    , module Firefly.Video.Texture
     ) where
 
 
@@ -23,4 +23,4 @@ import Firefly.Vector
 import Firefly.Video
 import Firefly.Video.Color
 import Firefly.Video.Font
-import Firefly.Video.Image
+import Firefly.Video.Texture

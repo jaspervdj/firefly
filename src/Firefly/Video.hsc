@@ -7,9 +7,9 @@ module Firefly.Video
 
     , drawLine
 
-    , drawImage
-    , drawImageCentered
-    , drawImageDebug
+    , drawTexture
+    , drawTextureCentered
+    , drawTextureDebug
 
     , drawString
     , drawStringCentered
@@ -55,12 +55,12 @@ foreign import ccall unsafe "ff_startLine" ff_startLine :: IO ()
 foreign import ccall unsafe "ff_endLine" ff_endLine :: IO ()
 foreign import ccall unsafe "ff_vertex" ff_vertex
     :: CDouble -> CDouble -> IO ()
-foreign import ccall unsafe "ff_drawImage" ff_drawImage
-    :: Ptr CImage -> IO ()
-foreign import ccall unsafe "ff_drawImageCentered" ff_drawImageCentered
-    :: Ptr CImage -> IO ()
-foreign import ccall unsafe "ff_drawImageDebug" ff_drawImageDebug
-    :: Ptr CImage -> IO ()
+foreign import ccall unsafe "ff_drawTexture" ff_drawTexture
+    :: Ptr CTexture -> IO ()
+foreign import ccall unsafe "ff_drawTextureCentered" ff_drawTextureCentered
+    :: Ptr CTexture -> IO ()
+foreign import ccall unsafe "ff_drawTextureDebug" ff_drawTextureDebug
+    :: Ptr CTexture -> IO ()
 foreign import ccall unsafe "ff_drawString" ff_drawString
     :: Ptr CFont -> Ptr CULong -> CInt -> IO ()
 foreign import ccall unsafe "ff_drawStringCentered" ff_drawStringCentered
@@ -117,20 +117,20 @@ vertex (Vector x y) = ff_vertex (realToFrac x) (realToFrac y)
 
 
 --------------------------------------------------------------------------------
-drawImage :: Image -> IO ()
-drawImage (Image fptr) = withForeignPtr fptr ff_drawImage
-{-# INLINE drawImage #-}
+drawTexture :: Texture -> IO ()
+drawTexture (Texture fptr) = withForeignPtr fptr ff_drawTexture
+{-# INLINE drawTexture #-}
 
 
 --------------------------------------------------------------------------------
-drawImageCentered :: Image -> IO ()
-drawImageCentered (Image fptr) = withForeignPtr fptr ff_drawImageCentered
-{-# INLINE drawImageCentered #-}
+drawTextureCentered :: Texture -> IO ()
+drawTextureCentered (Texture fptr) = withForeignPtr fptr ff_drawTextureCentered
+{-# INLINE drawTextureCentered #-}
 
 
 --------------------------------------------------------------------------------
-drawImageDebug :: Image -> IO ()
-drawImageDebug (Image fptr) = withForeignPtr fptr ff_drawImageDebug
+drawTextureDebug :: Texture -> IO ()
+drawTextureDebug (Texture fptr) = withForeignPtr fptr ff_drawTextureDebug
 
 
 --------------------------------------------------------------------------------

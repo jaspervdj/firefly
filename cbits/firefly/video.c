@@ -58,58 +58,58 @@ void ff_vertex(double x, double y) {
     glVertex3d(x, y, 0.0d);
 }
 
-void ff_drawImage(ff_image *image) {
+void ff_drawTexture(ff_texture *texture) {
     glEnable(GL_TEXTURE_2D);
-    glBindTexture(GL_TEXTURE_2D, image->texture);
+    glBindTexture(GL_TEXTURE_2D, texture->texture);
 
     glBegin(GL_QUADS);
 
-    glTexCoord2f(image->ltc, image->ttc);
+    glTexCoord2f(texture->ltc, texture->ttc);
     glVertex2f(0.0f, 0.0f);
 
-    glTexCoord2f(image->ltc, image->btc);
-    glVertex2f(0.0f, (GLfloat) image->height);
+    glTexCoord2f(texture->ltc, texture->btc);
+    glVertex2f(0.0f, (GLfloat) texture->height);
 
-    glTexCoord2f(image->rtc, image->btc);
-    glVertex2f((GLfloat) image->width, (GLfloat) image->height);
+    glTexCoord2f(texture->rtc, texture->btc);
+    glVertex2f((GLfloat) texture->width, (GLfloat) texture->height);
 
-    glTexCoord2f(image->rtc, image->ttc);
-    glVertex2f((GLfloat) image->width, 0.0f);
+    glTexCoord2f(texture->rtc, texture->ttc);
+    glVertex2f((GLfloat) texture->width, 0.0f);
 
     glEnd();
 }
 
-void ff_drawImageCentered(ff_image *image) {
+void ff_drawTextureCentered(ff_texture *texture) {
     glPushMatrix();
-    glTranslatef((float) -image->width * 0.5f,
-            (float) -image->height * 0.5f, 0.0f);
-    ff_drawImage(image);
+    glTranslatef((float) -texture->width * 0.5f,
+            (float) -texture->height * 0.5f, 0.0f);
+    ff_drawTexture(texture);
     glPopMatrix();
 }
 
-void ff_drawImageDebug(ff_image *image) {
+void ff_drawTextureDebug(ff_texture *texture) {
     glColor3f(1.0f, 1.0f, 1.0f);
     glEnable(GL_TEXTURE_2D);
-    glBindTexture(GL_TEXTURE_2D, image->texture);
+    glBindTexture(GL_TEXTURE_2D, texture->texture);
 
     glBegin(GL_QUADS);
     glTexCoord2f(0.0f, 0.0f);
     glVertex2f(0.0f, 0.0f);
     glTexCoord2f(0.0f, 1.0f);
-    glVertex2f(0.0f, (GLfloat) image->th);
+    glVertex2f(0.0f, (GLfloat) texture->th);
     glTexCoord2f(1.0f, 1.0f);
-    glVertex2f((GLfloat) image->tw, (GLfloat) image->th);
+    glVertex2f((GLfloat) texture->tw, (GLfloat) texture->th);
     glTexCoord2f(1.0f, 0.0f);
-    glVertex2f((GLfloat) image->tw, 0.0f);
+    glVertex2f((GLfloat) texture->tw, 0.0f);
     glEnd();
 
     glDisable(GL_TEXTURE_2D);
     glColor3f(1.0f, 0.0f, 0.0f);
     glBegin(GL_LINE_LOOP);
     glVertex2f(0.0f, 0.0f);
-    glVertex2f(0.0f, (GLfloat) image->height);
-    glVertex2f((GLfloat) image->width, (GLfloat) image->height);
-    glVertex2f((GLfloat) image->width, 0.0f);
+    glVertex2f(0.0f, (GLfloat) texture->height);
+    glVertex2f((GLfloat) texture->width, (GLfloat) texture->height);
+    glVertex2f((GLfloat) texture->width, 0.0f);
     glEnd();
 }
 
@@ -123,7 +123,7 @@ void ff_drawString(ff_font *font,
         glyph = ff_fontLookupGlyph(font, string[i]);
 
         glTranslatef((GLfloat) glyph->left, (GLfloat) -glyph->top, 0.0f);
-        ff_drawImage(glyph->image);
+        ff_drawTexture(glyph->texture);
         glTranslatef((GLfloat) (glyph->advance - glyph->left),
                 (GLfloat) glyph->top, 0.0f);
     }
