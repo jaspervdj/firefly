@@ -1,6 +1,9 @@
 --------------------------------------------------------------------------------
 module Firefly.Video.Internal
-    ( CTexture
+    ( CImage
+    , Image (..)
+    
+    , CTexture
     , Texture (..)
 
     , CFont
@@ -16,6 +19,14 @@ import           Foreign.C.Types
 import           Foreign.ForeignPtr
 import           Foreign.Marshal.Array
 import           Foreign.Ptr
+
+
+--------------------------------------------------------------------------------
+type CImage = CChar
+
+
+--------------------------------------------------------------------------------
+newtype Image = Image (ForeignPtr CImage)
 
 
 --------------------------------------------------------------------------------

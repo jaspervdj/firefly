@@ -1,7 +1,8 @@
 --------------------------------------------------------------------------------
-module Firefly.Input.Internal
-    ( Key (..)
-    , MouseButton (..)
+-- | Some internal utility functions
+module Firefly.Internal
+    ( fromBool
+    , toBool
     ) where
 
 
@@ -10,10 +11,13 @@ import           Foreign.C.Types (CInt)
 
 
 --------------------------------------------------------------------------------
--- | See "Firefly.Input.Keys" for a list
-newtype Key = Key CInt
+toBool :: CInt -> Bool
+toBool = (/= 0)
+{-# INLINE toBool #-}
 
 
 --------------------------------------------------------------------------------
--- | See "Firefly.Input.MouseButtons" for a list
-newtype MouseButton = MouseButton CInt
+fromBool :: Bool -> CInt
+fromBool True  = 1
+fromBool False = 0
+{-# INLINE fromBool #-}

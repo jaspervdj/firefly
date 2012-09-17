@@ -12,15 +12,16 @@ import           Data.Maybe          (mapMaybe)
 
 --------------------------------------------------------------------------------
 -- | Parses something of the form: "SDLK_XXX = 323,"
-parseKey :: String -> Maybe String
+parseKey :: String -> Maybe (String, Int)
 parseKey str = case break (== '=') str of
     (_ , "")                         -> Nothing
-    (name, _)
-        | "SDLK_" `isPrefixOf` name' -> Just name'
+    (name, rest)
+        | "SDLK_" `isPrefixOf` name' -> Just (name', val)
         | otherwise                  -> Nothing
       where
         name' = trim name
         trim  = reverse . dropWhile isSpace . reverse . dropWhile isSpace
+        val   = read $ trim $ takeWhile (/= ',') $ drop 1 rest
 
 
 --------------------------------------------------------------------------------
@@ -45,10 +46,12 @@ makeExportList (n : ns) =
 
 
 --------------------------------------------------------------------------------
-makeDefinition :: String -> [String]
-makeDefinition name =
-    [ "#{enum Key, Key, " ++ name' ++ " = " ++ name ++ "}"
+makeDefinition :: String -> Int -> [String]
+makeDefinition name val =
+    [ name' ++ " :: Key"
+    , name' ++ " = Key " ++ show val
     , "{-# INLINE " ++ name' ++ " #-}"
+    , ""
     ]
   where
     name' = sanitizeKeyName name
@@ -60,7 +63,7 @@ main = do
     keys <- mapMaybe parseKey . lines <$> getContents
 
     -- Print export list
-    putStrLn $ unlines $ makeExportList keys
+    putStrLn $ unlines $ makeExportList $ map fst keys
 
     -- Print definitions
-    putStrLn $ unlines $ concat $ map makeDefinition keys
+    putStrLn $ unlines $ concat $ map (uncurry makeDefinition) keys

@@ -1,5 +1,4 @@
 --------------------------------------------------------------------------------
-{-# LANGUAGE CPP                      #-}
 {-# LANGUAGE ForeignFunctionInterface #-}
 module Firefly.Audio.Sound
     ( Sound
@@ -13,9 +12,9 @@ module Firefly.Audio.Sound
 --------------------------------------------------------------------------------
 import           Control.Applicative    ((<$>))
 import           Foreign.C.String
+import           Foreign.C.Types
 import           Foreign.ForeignPtr
 import           Foreign.Ptr
-import           Foreign.Storable
 import           System.IO.Unsafe       (unsafePerformIO)
 
 
@@ -24,14 +23,12 @@ import           Firefly.Audio.Internal
 
 
 --------------------------------------------------------------------------------
-#include "firefly/audio/sound.h"
-
-
---------------------------------------------------------------------------------
 foreign import ccall unsafe "ff_soundFromFile" ff_soundFromFile
     :: CString -> IO (Ptr CSound)
 foreign import ccall "&ff_soundFree" ff_soundFree
     :: FunPtr (Ptr CSound -> IO ())
+foreign import ccall unsafe "ff_soundFilePath" ff_soundFilePath
+    :: Ptr CSound -> IO (Ptr CChar)
 
 
 --------------------------------------------------------------------------------
@@ -48,6 +45,5 @@ soundFromFile filePath = do
 
 --------------------------------------------------------------------------------
 soundFilePath :: Sound -> FilePath
-soundFilePath (Sound fptr) = unsafePerformIO $ withForeignPtr fptr $ \ptr -> do
-    cstring <- #{peek ff_sound, filePath}  ptr :: IO CString
-    peekCString cstring
+soundFilePath (Sound fptr) = unsafePerformIO $ withForeignPtr fptr $ \ptr ->
+    ff_soundFilePath ptr >>= peekCString

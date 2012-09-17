@@ -1,11 +1,20 @@
-{-# LANGUAGE CPP                      #-}
 {-# LANGUAGE ForeignFunctionInterface #-}
 module Firefly.Video
     ( setVideoMode
     , getScreenSize
+    , isFullScreen
+    , getFullScreenModes
+
+    , setShowCursor
+    , isShowCursor
+
     , frame
 
     , drawLine
+    , drawTriangle
+    , drawQuad
+    , drawRectangle
+    , drawCircle
 
     , drawTexture
     , drawTextureCentered
@@ -22,6 +31,7 @@ module Firefly.Video
     , pushColor
     , setColor
     , getColor
+    , setBackgroundColor
     ) where
 
 
@@ -35,26 +45,34 @@ import           Foreign.Storable
 
 
 --------------------------------------------------------------------------------
-import           Firefly.Vector
+import           Firefly.Internal
+import           Firefly.Math.XY
 import           Firefly.Video.Color
 import           Firefly.Video.Internal
 
 
 --------------------------------------------------------------------------------
-#include "firefly/video.h"
-
-
---------------------------------------------------------------------------------
 foreign import ccall unsafe "ff_setVideoMode" ff_setVideoMode
-    :: CInt -> CInt -> IO ()
+    :: CInt -> CInt -> CInt -> IO ()
 foreign import ccall unsafe "ff_getScreenWidth" ff_getScreenWidth :: IO CInt
 foreign import ccall unsafe "ff_getScreenHeight" ff_getScreenHeight :: IO CInt
+foreign import ccall unsafe "ff_isFullScreen" ff_isFullScreen :: IO CInt
+foreign import ccall unsafe "ff_getFullScreenModes" ff_getFullScreenModes
+    :: CInt -> Ptr CInt -> IO CInt
+foreign import ccall unsafe "ff_setShowCursor" ff_setShowCursor :: CInt -> IO ()
+foreign import ccall unsafe "ff_isShowCursor" ff_isShowCursor :: IO CInt
 foreign import ccall unsafe "ff_startFrame" ff_startFrame :: IO ()
 foreign import ccall unsafe "ff_endFrame" ff_endFrame :: IO ()
 foreign import ccall unsafe "ff_startLine" ff_startLine :: IO ()
 foreign import ccall unsafe "ff_endLine" ff_endLine :: IO ()
+foreign import ccall unsafe "ff_startTriangles" ff_startTriangles :: IO ()
+foreign import ccall unsafe "ff_endTriangles" ff_endTriangles :: IO ()
+foreign import ccall unsafe "ff_startQuads" ff_startQuads :: IO ()
+foreign import ccall unsafe "ff_endQuads" ff_endQuads :: IO ()
 foreign import ccall unsafe "ff_vertex" ff_vertex
     :: CDouble -> CDouble -> IO ()
+foreign import ccall unsafe "ff_drawCircle" ff_drawCircle
+    :: CDouble -> CInt -> IO ()
 foreign import ccall unsafe "ff_drawTexture" ff_drawTexture
     :: Ptr CTexture -> IO ()
 foreign import ccall unsafe "ff_drawTextureCentered" ff_drawTextureCentered
@@ -75,12 +93,15 @@ foreign import ccall unsafe "ff_setColor" ff_setColor
     :: CDouble -> CDouble -> CDouble -> CDouble -> IO ()
 foreign import ccall unsafe "ff_getColor" ff_getColor
     :: Ptr CDouble -> IO ()
+foreign import ccall unsafe "ff_setBackgroundColor" ff_setBackgroundColor
+    :: CDouble -> CDouble -> CDouble -> CDouble -> IO ()
 
 
 --------------------------------------------------------------------------------
-setVideoMode :: (Int, Int) -> IO ()
-setVideoMode (width, height) =
-    ff_setVideoMode (fromIntegral width) (fromIntegral height)
+setVideoMode :: (Int, Int) -> Bool -> IO ()
+setVideoMode (width, height) fullScreen = ff_setVideoMode
+    (fromIntegral width) (fromIntegral height) (fromBool fullScreen)
+{-# INLINE setVideoMode #-}
 
 
 --------------------------------------------------------------------------------
@@ -93,6 +114,38 @@ getScreenSize = do
 
 
 --------------------------------------------------------------------------------
+isFullScreen :: IO Bool
+isFullScreen = toBool <$> ff_isFullScreen
+{-# INLINE isFullScreen #-}
+
+
+--------------------------------------------------------------------------------
+getFullScreenModes :: IO [(Int, Int)]
+getFullScreenModes =
+    allocaArray (maxModes * 32) $ \ptr -> do
+        numModes <- ff_getFullScreenModes (fromIntegral maxModes) ptr
+        array    <- peekArray (fromIntegral numModes * 2) ptr
+        return $ pairs $ map fromIntegral array
+  where
+    maxModes = 32
+
+    pairs (w : h : zs) = (w, h) : pairs zs
+    pairs _            = []
+
+
+--------------------------------------------------------------------------------
+setShowCursor :: Bool -> IO ()
+setShowCursor = ff_setShowCursor . fromBool
+{-# INLINE setShowCursor #-}
+
+
+--------------------------------------------------------------------------------
+isShowCursor :: IO Bool
+isShowCursor = toBool <$> ff_isShowCursor
+{-# INLINE isShowCursor #-}
+
+
+--------------------------------------------------------------------------------
 frame :: IO () -> IO ()
 frame block = do
     ff_startFrame
@@ -102,7 +155,7 @@ frame block = do
 
 
 --------------------------------------------------------------------------------
-drawLine :: [Vector] -> IO ()
+drawLine :: [XY] -> IO ()
 drawLine vectors = do
     ff_startLine
     mapM_ vertex vectors
@@ -111,9 +164,40 @@ drawLine vectors = do
 
 
 --------------------------------------------------------------------------------
-vertex :: Vector -> IO ()
-vertex (Vector x y) = ff_vertex (realToFrac x) (realToFrac y)
+drawTriangle :: XY -> XY -> XY -> IO ()
+drawTriangle v1 v2 v3 = do
+    ff_startTriangles
+    vertex v1 >> vertex v2 >> vertex v3
+    ff_endTriangles
+{-# INLINE drawTriangle #-}
+
+
+--------------------------------------------------------------------------------
+drawQuad :: XY -> XY -> XY -> XY -> IO ()
+drawQuad v1 v2 v3 v4 = do
+    ff_startQuads
+    vertex v1 >> vertex v2 >> vertex v3 >> vertex v4
+    ff_endQuads
+{-# INLINE drawQuad #-}
+
+
+--------------------------------------------------------------------------------
+drawRectangle :: XY -> IO ()
+drawRectangle (XY w h) = drawQuad
+    (XY 0 0) (XY 0 h) (XY w h) (XY w 0)
+{-# INLINE drawRectangle #-}
+
+
+--------------------------------------------------------------------------------
+vertex :: XY -> IO ()
+vertex (XY x' y') = ff_vertex (realToFrac x') (realToFrac y')
 {-# INLINE vertex #-}
+
+
+--------------------------------------------------------------------------------
+drawCircle :: Double -> Int -> IO ()
+drawCircle r steps = ff_drawCircle (realToFrac r) (fromIntegral steps)
+{-# INLINE drawCircle #-}
 
 
 --------------------------------------------------------------------------------
@@ -159,8 +243,8 @@ pushMatrix block = do
 
 
 --------------------------------------------------------------------------------
-translate :: Vector -> IO ()
-translate (Vector x y) = ff_translate (realToFrac x) (realToFrac y)
+translate :: XY -> IO ()
+translate (XY x' y') = ff_translate (realToFrac x') (realToFrac y')
 {-# INLINE translate #-}
 
 
@@ -172,9 +256,20 @@ rotate r = ff_rotate (realToFrac r)
 
 
 --------------------------------------------------------------------------------
-scale :: Vector -> IO ()
-scale (Vector x y) = ff_scale (realToFrac x) (realToFrac y)
+scale :: XY -> IO ()
+scale (XY x' y') = ff_scale (realToFrac x') (realToFrac y')
 {-# INLINE scale #-}
+
+
+--------------------------------------------------------------------------------
+-- | Pushes the current color on a stack, execute the given block of code and
+-- pops the color again.
+pushColor :: IO () -> IO ()
+pushColor block = do
+    color <- getColor
+    block
+    setColor color
+{-# INLINE pushColor #-}
 
 
 --------------------------------------------------------------------------------
@@ -197,11 +292,7 @@ getColor = allocaArray 4 $ \ptr -> do
 
 
 --------------------------------------------------------------------------------
--- | Pushes the current color on a stack, execute the given block of code and
--- pops the color again.
-pushColor :: IO () -> IO ()
-pushColor block = do
-    color <- getColor
-    block
-    setColor color
-{-# INLINE pushColor #-}
+setBackgroundColor :: Color -> IO ()
+setBackgroundColor (Color r g b a) = ff_setBackgroundColor
+    (realToFrac r) (realToFrac g) (realToFrac b) (realToFrac a)
+{-# INLINE setBackgroundColor #-}

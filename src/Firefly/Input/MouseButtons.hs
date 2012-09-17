@@ -1,5 +1,4 @@
 --------------------------------------------------------------------------------
-{-# LANGUAGE CPP #-}
 module Firefly.Input.MouseButtons
     ( left
     , middle
@@ -8,18 +7,22 @@ module Firefly.Input.MouseButtons
 
 
 --------------------------------------------------------------------------------
---
 import           Firefly.Input.Internal
 
 
 --------------------------------------------------------------------------------
-#include <SDL.h>
+left :: MouseButton
+left = MouseButton 1
+{-# INLINE left #-}
 
 
 --------------------------------------------------------------------------------
-#{enum MouseButton, MouseButton, left = SDL_BUTTON_LEFT}
-{-# INLINE left #-}
-#{enum MouseButton, MouseButton, middle = SDL_BUTTON_MIDDLE}
+middle :: MouseButton
+middle = MouseButton 2
 {-# INLINE middle #-}
-#{enum MouseButton, MouseButton, right = SDL_BUTTON_RIGHT}
+
+
+--------------------------------------------------------------------------------
+right :: MouseButton
+right = MouseButton 3
 {-# INLINE right #-}

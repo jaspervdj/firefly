@@ -5,11 +5,20 @@
 
 #include "firefly/video.h"
 
-void ff_setVideoMode(int width, int height) {
+#define VIDEO_FLAGS (SDL_OPENGL | SDL_DOUBLEBUF)
+
+int global_fullScreen = 0;
+
+void ff_setVideoMode(int width, int height, int fullScreen) {
+    int flags = VIDEO_FLAGS;
+
 #ifdef DEBUG
-    printf("video/ff_setVideoMode(%d, %d)\n", width, height);
+    printf("video/ff_setVideoMode(%d, %d, %d)\n", width, height, fullScreen);
 #endif
-    SDL_SetVideoMode(width, height, 24, SDL_OPENGL | SDL_DOUBLEBUF);
+    global_fullScreen = fullScreen;
+
+    if(fullScreen) flags |= SDL_FULLSCREEN;
+    SDL_SetVideoMode(width, height, 24, flags);
 
     /* Enable textures, and transparent texures */
     glEnable(GL_TEXTURE_2D);
@@ -36,9 +45,37 @@ int ff_getScreenHeight(void) {
     return screen->h;
 }
 
+int ff_isFullScreen(void) {
+    return global_fullScreen;
+}
+
+int ff_getFullScreenModes(int maxModes, int *modes) {
+    int i;
+    SDL_Rect **rects;
+
+    rects = SDL_ListModes(0, SDL_FULLSCREEN | VIDEO_FLAGS);
+
+    for(i = 0; i < maxModes && rects[i]; i++) {
+        modes[i * 2] = rects[i]->w;
+        modes[i * 2 + 1] = rects[i]->h;
+    }
+
+    return i;
+}
+
+void ff_setShowCursor(int showCursor) {
+    SDL_ShowCursor(showCursor ? SDL_ENABLE : SDL_DISABLE);
+}
+
+int ff_isShowCursor(void) {
+    int showCursor = SDL_ShowCursor(SDL_QUERY);
+    return showCursor == SDL_ENABLE ? 1 : 0;
+}
+
 void ff_startFrame(void) {
     glClear(GL_COLOR_BUFFER_BIT);
     glLoadIdentity();
+    glColor4f(1.0f, 1.0f, 1.0f, 1.0f);
 }
 
 void ff_endFrame(void) {
@@ -46,7 +83,6 @@ void ff_endFrame(void) {
 }
 
 void ff_startLine(void) {
-    glColor4f(1.0f, 1.0f, 1.0f, 1.0f);
     glBegin(GL_LINE_STRIP);
 }
 
@@ -54,8 +90,42 @@ void ff_endLine(void) {
     glEnd();
 }
 
+void ff_startTriangles(void) {
+    glBegin(GL_TRIANGLES);
+}
+
+void ff_endTriangles(void) {
+    glEnd();
+}
+
+void ff_startQuads(void) {
+    glBegin(GL_QUADS);
+}
+
+void ff_endQuads(void) {
+    glEnd();
+}
+
 void ff_vertex(double x, double y) {
     glVertex3d(x, y, 0.0d);
+}
+
+void ff_drawCircle(double r, int steps) {
+    int i;
+    double th = 0.0d;
+    double d = 2.0d * M_PI / (double) steps;
+
+    glBegin(GL_TRIANGLE_FAN);
+    glVertex3d(0.0d, 0.0d, 0.0d);
+
+    for(i = 0; i < steps; i++) {
+        glVertex3d(r * cos(th), r * sin(th), 0.0d);
+        th += d;
+    }
+
+    glVertex3d(r, 0.0d, 0.0d);  /* Closing point */
+
+    glEnd();
 }
 
 void ff_drawTexture(ff_texture *texture) {
@@ -77,6 +147,8 @@ void ff_drawTexture(ff_texture *texture) {
     glVertex2f((GLfloat) texture->width, 0.0f);
 
     glEnd();
+
+    glDisable(GL_TEXTURE_2D);
 }
 
 void ff_drawTextureCentered(ff_texture *texture) {
@@ -111,6 +183,7 @@ void ff_drawTextureDebug(ff_texture *texture) {
     glVertex2f((GLfloat) texture->width, (GLfloat) texture->height);
     glVertex2f((GLfloat) texture->width, 0.0f);
     glEnd();
+    glDisable(GL_TEXTURE_2D);
 }
 
 void ff_drawString(ff_font *font,
@@ -119,6 +192,7 @@ void ff_drawString(ff_font *font,
     ff_glyph *glyph;
 
     glPushMatrix();
+    glTranslatef(0.0f, font->ascent, 0.0f);
     for(i = 0; i < stringLength; i++) {
         glyph = ff_fontLookupGlyph(font, string[i]);
 
@@ -140,11 +214,11 @@ void ff_drawStringCentered(ff_font *font,
     glPopMatrix();
 }
 
-void ff_pushMatrix() {
+void ff_pushMatrix(void) {
     glPushMatrix();
 }
 
-void ff_popMatrix() {
+void ff_popMatrix(void) {
     glPopMatrix();
 }
 
@@ -166,4 +240,8 @@ void ff_setColor(double r, double g, double b, double a) {
 
 void ff_getColor(double *rgba) {
     glGetDoublev(GL_CURRENT_COLOR, rgba);
+}
+
+void ff_setBackgroundColor(double r, double g, double b, double a) {
+    glClearColor(r, g, b, a);
 }

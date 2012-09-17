@@ -29,6 +29,7 @@ void ff_glyphNodeFree(ff_glyphNode *glyphNode);
 
 typedef struct {
     int size;
+    float ascent;
     FT_Library library;
     FT_Face face;
 
@@ -42,6 +43,7 @@ void ff_fontFree(ff_font *font);
 ff_glyph *ff_fontLoadGlyph(ff_font *font, unsigned long codepoint);
 ff_glyph *ff_fontLookupGlyph(ff_font *font, unsigned long codepoint);
 
+int ff_fontSize(ff_font *font);
 double ff_fontStringWidth(ff_font *font,
         const unsigned long *string, int stringLength);
 

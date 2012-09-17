@@ -1,9 +1,8 @@
 --------------------------------------------------------------------------------
-{-# LANGUAGE CPP                      #-}
 {-# LANGUAGE ForeignFunctionInterface #-}
 module Firefly.Video.Texture
     ( Texture
-    , textureFromGradient
+    , textureFromImage
     , textureFromPng
 
     , textureSize
@@ -18,7 +17,6 @@ import           Foreign.C.String
 import           Foreign.C.Types
 import           Foreign.ForeignPtr
 import           Foreign.Ptr
-import           Foreign.Storable
 import           System.IO.Unsafe       (unsafePerformIO)
 
 
@@ -27,25 +25,25 @@ import           Firefly.Video.Internal
 
 
 --------------------------------------------------------------------------------
-#include "firefly/video/texture.h"
-
-
---------------------------------------------------------------------------------
-foreign import ccall unsafe "ff_textureFromGradient" ff_textureFromGradient
-    :: CInt -> CInt -> IO (Ptr CTexture)
+foreign import ccall unsafe "ff_textureFromImage" ff_textureFromImage
+    :: Ptr CImage -> IO (Ptr CTexture)
 foreign import ccall unsafe "ff_textureFromPng" ff_textureFromPng
     :: CString -> IO (Ptr CTexture)
 foreign import ccall "&ff_textureFree" ff_textureFree
     :: FunPtr (Ptr CTexture -> IO ())
+foreign import ccall unsafe "ff_textureWidth" ff_textureWidth
+    :: Ptr CTexture -> IO CInt
+foreign import ccall unsafe "ff_textureHeight" ff_textureHeight
+    :: Ptr CTexture -> IO CInt
 foreign import ccall unsafe "ff_textureSlice" ff_textureSlice
     :: Ptr CTexture -> CInt -> CInt -> CInt -> CInt -> IO (Ptr CTexture)
 
 
 --------------------------------------------------------------------------------
-textureFromGradient :: (Int, Int) -> IO Texture
-textureFromGradient (w, h) = do
-    ptr <- ff_textureFromGradient (fromIntegral w) (fromIntegral h)
-    Texture <$> newForeignPtr ff_textureFree ptr
+textureFromImage :: Image -> IO Texture
+textureFromImage (Image ifptr) = withForeignPtr ifptr $ \iptr -> do
+    tptr <- ff_textureFromImage iptr
+    Texture <$> newForeignPtr ff_textureFree tptr
 
 
 --------------------------------------------------------------------------------
@@ -61,8 +59,8 @@ textureFromPng filePath = do
 --------------------------------------------------------------------------------
 textureSize :: Texture -> (Int, Int)
 textureSize (Texture fptr) = unsafePerformIO $ withForeignPtr fptr $ \ptr -> do
-    w <- #{peek ff_texture, width}  ptr :: IO CInt
-    h <- #{peek ff_texture, height} ptr :: IO CInt
+    w <- ff_textureWidth  ptr
+    h <- ff_textureHeight ptr
     return (fromIntegral w, fromIntegral h)
 
 

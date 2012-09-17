@@ -11,4 +11,6 @@ typedef struct {
 ff_sound *ff_soundFromFile(const char *filePath);
 void ff_soundFree(ff_sound *sound);
 
+char *songFilePath(ff_sound *sound);
+
 #endif

@@ -34,3 +34,7 @@ void ff_soundFree(ff_sound *sound) {
     Mix_FreeChunk(sound->chunk);
     free(sound);
 }
+
+char *ff_soundFilePath(ff_sound *sound) {
+    return sound->filePath;
+}

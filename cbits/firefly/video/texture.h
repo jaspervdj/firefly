@@ -3,9 +3,11 @@
 
 #include <GL/gl.h>
 
+#include "firefly/video/image.h"
+
 typedef struct {
     int width, height;
-    int pixelSize;
+    int bpp;
     int tw, th; /* Powers of two */
     float ttc, rtc, btc, ltc; /* Texture coordinates */
 
@@ -13,18 +15,18 @@ typedef struct {
     GLuint texture;
 } ff_texture;
 
-ff_texture *ff_textureCreate(int width, int height, int pixelSize,
-        GLubyte *pixels);
-ff_texture *ff_textureFromGradient(int width, int height);
+ff_texture *ff_textureFromImage(ff_image *image);
 ff_texture *ff_textureFromPng(const char *filePath);
 void ff_textureFree(ff_texture *texture);
+
+int ff_textureWidth(ff_texture *texture);
+int ff_textureHeight(ff_texture *texture);
 
 ff_texture *ff_textureSlice(ff_texture *texture,
         int x, int y, int width, int height);
 
-GLenum ff_formatForPixelSize(int pixelSize);
+GLenum ff_formatForPixelSize(int bpp);
 int ff_nearestPowerOfTwo(int x);
-void ff_copyPixels(GLubyte *src, int sw, int sh,
-        GLubyte *dst, int dw, int dh, int pixelSize);
+void ff_copyPixels(ff_image *image, GLubyte *dst, int dw, int dh);
 
 #endif

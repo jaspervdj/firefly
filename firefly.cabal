@@ -21,6 +21,7 @@ Extra-source-files:
   cbits/firefly/input.h
   cbits/firefly/video.h
   cbits/firefly/video/font.h
+  cbits/firefly/video/image.h
   cbits/firefly/video/texture.h
 
 Library
@@ -36,24 +37,28 @@ Library
     cbits/firefly/input.c
     cbits/firefly/video.c
     cbits/firefly/video/font.c
+    cbits/firefly/video/image.c
     cbits/firefly/video/texture.c
 
   Exposed-modules:     
     Firefly
     Firefly.Audio
     Firefly.Audio.Sound
-    Firefly.Collision
     Firefly.Engine
     Firefly.Input
     Firefly.Input.MouseButtons
     Firefly.Input.Keys
-    Firefly.Vector
+    Firefly.Math.Box
+    Firefly.Math.Shape
+    Firefly.Math.XY
     Firefly.Video
     Firefly.Video.Color
     Firefly.Video.Font
+    Firefly.Video.Image
     Firefly.Video.Texture
 
   Other-modules:
+    Firefly.Internal
     Firefly.Audio.Internal
     Firefly.Input.Internal
     Firefly.Video.Internal
@@ -61,16 +66,41 @@ Library
   Build-depends:
     base >= 4 && < 5
 
-  Pkgconfig-depends:
-    freetype2,
-    gl,
-    libpng,
-    sdl       >= 1.2,
-    SDL_mixer >= 1.2
+  If(os(windows))
+    Include-dirs:
+      ../SDL-1.2.15/include
+      ../SDL_mixer-1.2.12
+      ../freetype-2.4.10/include
+      ../libpng-1.5.12/
+    
+    Ld-options:
+      -L../libpng-1.5.12
+      -L../zlib-1.2.7
+      -L../SDL_mixer-1.2.12/build/.libs
+      -L../freetype-2.4.10/objs/.libs
+      -L../SDL-1.2.15/build/.libs
+      
+      -lpng
+      -lz
+      -lSDL_mixer
+      -lfreetype
+      -lopengl32
+      -lmingw32
+      -lSDLmain
+      -lSDL
+      -mwindows
+    
+  Else
+    Pkgconfig-depends:
+      freetype2,
+      gl,
+      libpng,
+      sdl       >= 1.2,
+      SDL_mixer >= 1.2
 
 Executable firefly-example
   Cpp-options:    -DDEBUG
-  Hs-source-dirs: example
+  Hs-source-dirs: examples
   Main-is:        Main.hs
 
   Build-depends:
@@ -79,9 +109,30 @@ Executable firefly-example
 
 Executable firefly-collision
   Cpp-options:    -DDEBUG
-  Hs-source-dirs: example
+  Ghc-options:    -Wall
+  Hs-source-dirs: examples
   Main-is:        collision.hs
 
   Build-depends:
-    base    >= 4   && < 5,
-    firefly >= 0.0 && < 0.1
+    base   >= 4   && < 5,
+    random >= 1.0 && < 1.1,
+    firefly
+
+Executable firefly-histogram
+  Cpp-options:    -DDEBUG
+  Hs-source-dirs: examples
+  Main-is:        histogram.hs
+
+  Build-depends:
+    base       >= 4   && < 5,
+    containers >= 0.4 && < 0.6,
+    firefly
+
+Executable firefly-audio
+  Cpp-options:    -DDEBUG
+  Hs-source-dirs: examples
+  Main-is:        audio.hs
+
+  Build-depends:
+    base    >= 4 && < 5,
+    firefly

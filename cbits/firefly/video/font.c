@@ -1,4 +1,5 @@
 #include "firefly/video/font.h"
+#include "firefly/video/image.h"
 
 ff_glyph *ff_glyphFromGlyphSlot(FT_GlyphSlot glyphSlot) {
     ff_glyph *glyph;
@@ -6,23 +7,23 @@ ff_glyph *ff_glyphFromGlyphSlot(FT_GlyphSlot glyphSlot) {
     int width = bitmap.width;
     int height = bitmap.rows;
     int x, y;
+    ff_image *image;
 
     glyph = malloc(sizeof(ff_glyph));
     glyph->advance = (float) glyphSlot->advance.x / 64;
     glyph->left = (float) glyphSlot->metrics.horiBearingX / 64;
     glyph->top = (float) glyphSlot->metrics.horiBearingY / 64;
 
-    GLubyte *pixels = malloc(width * height * sizeof(GLubyte));
-
+    image = ff_imageCreate(width, height, 1);
     for(y = 0; y < height; y++) {
         for(x = 0; x < width; x++) {
-            pixels[y * width + x] = bitmap.buffer[width * y + x];
+            image->pixels[y * width + x] = bitmap.buffer[width * y + x];
         }
     }
 
-    glyph->texture = ff_textureCreate(width, height, 1, pixels);
+    glyph->texture = ff_textureFromImage(image);
+    ff_imageFree(image);
 
-    free(pixels);
     return glyph;
 }
 
@@ -68,12 +69,13 @@ ff_font *ff_fontFromTtf(const char *filePath, int size) {
         return 0;
     }
 
+    FT_Set_Pixel_Sizes(face, 0, (FT_UInt) size);
+
     font = malloc(sizeof(ff_font));
     font->size = size;
+    font->ascent = (float) face->size->metrics.ascender / 64.0f;
     font->library = library;
     font->face = face;
-
-    FT_Set_Pixel_Sizes(face, 0, (FT_UInt) size);
 
     /* Make space for glyphs, nothing is loaded yet */
     font->numGlyphNodes = 512;
@@ -147,6 +149,10 @@ ff_glyph *ff_fontLookupGlyph(ff_font *font, unsigned long codepoint) {
         node->next = ff_glyphNodeCreate(codepoint, glyph);
         return glyph;
     }
+}
+
+int ff_fontSize(ff_font *font) {
+    return font->size;
 }
 
 double ff_fontStringWidth(ff_font *font,

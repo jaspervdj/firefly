@@ -11,24 +11,31 @@ import           Control.Monad              (forever)
 import qualified Firefly                    as F
 import qualified Firefly.Input.Keys         as FK
 import qualified Firefly.Input.MouseButtons as FMB
-import           Firefly.Vector
+import           Firefly.Math.XY
 
 
 --------------------------------------------------------------------------------
 main :: IO ()
 main = F.firefly $ do
-    F.setVideoMode (800, 600)
+    modes <- F.getFullScreenModes
+    putStrLn $ "Available fullscreen modes: " ++ show modes
 
-    background  <- F.textureFromPng "example/background.png"
-    img         <- F.textureFromPng "example/acid.png"
-    font        <- F.fontFromTtf "example/japanese.ttf" 120
-    sound       <- F.soundFromFile "example/sound.wav"
+    F.setVideoMode (800, 600) True
+
+    background  <- F.textureFromPng "examples/background.png"
+    font        <- F.fontFromTtf "examples/japanese.ttf" 120
+    sound       <- F.soundFromFile "examples/sound.wav"
+
+
+    tmp <- F.imageFromPng "examples/acid.png"
+    img <- F.textureFromImage $ F.imageSlice (100, 100) (200, 200) tmp
+
 
     F.playSound sound
 
     putStrLn $ "Image size: " ++ show (F.textureSize img)
     putStrLn $ "Sound: " ++ F.soundFilePath sound
-    F.playMusic "example/music.mp3" F.DontLoop
+    F.playMusic "examples/music.mp3" F.DontLoop
 
     loop background img font
 
@@ -49,13 +56,13 @@ loop background img font = do
         let (sw, sh) = screenSize
 
         F.pushMatrix $ do
-            F.translate $ F.Vector (- ticks' * fromIntegral sw) 0
+            F.translate $ F.XY (- ticks' * fromIntegral sw) 0
             F.drawTexture background
-            F.translate $ F.Vector (fromIntegral sw) 0
+            F.translate $ F.XY (fromIntegral sw) 0
             F.drawTexture background
 
         F.pushMatrix $ F.pushColor $ do
-            F.translate $ F.fromInts (sw `div` 2, 120)
+            F.translate $ F.fromInts (sw `div` 2, 0)
 
             F.setColor $ F.fromRgba 0 0 0 0.2
             F.drawStringCentered font "ラーメン"
@@ -65,7 +72,7 @@ loop background img font = do
             F.drawStringCentered font "ラーメン"
 
 
-        F.translate $ Vector 0 80 .+. F.fromInts screenSize ./ 2
+        F.translate $ XY 0 80 .+. F.fromInts screenSize ./ 2
         F.rotate $ 2 * pi * ticks'
         F.drawTextureCentered img
 
