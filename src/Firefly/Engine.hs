@@ -8,8 +8,8 @@ module Firefly.Engine
 
 
 --------------------------------------------------------------------------------
+import           Control.Monad.Trans (MonadIO, liftIO)
 import           Foreign.C.Types
-import           Prelude         hiding (init)
 
 
 --------------------------------------------------------------------------------
@@ -27,11 +27,11 @@ foreign import ccall unsafe "ff_delay"ff_delay :: CInt -> IO ()
 -- > main = firefly $ do
 -- >     ...
 --
-firefly :: IO () -> IO ()
+firefly :: MonadIO m => m () -> m ()
 firefly block = do
-    ff_init
+    liftIO ff_init
     block
-    ff_quit
+    liftIO ff_quit
 
 
 --------------------------------------------------------------------------------

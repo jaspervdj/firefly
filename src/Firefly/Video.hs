@@ -1,3 +1,4 @@
+--------------------------------------------------------------------------------
 {-# LANGUAGE ForeignFunctionInterface #-}
 module Firefly.Video
     ( setVideoMode
@@ -37,6 +38,7 @@ module Firefly.Video
 
 --------------------------------------------------------------------------------
 import           Control.Applicative    ((<$>))
+import           Control.Monad.Trans    (MonadIO, liftIO)
 import           Foreign.C.Types
 import           Foreign.ForeignPtr
 import           Foreign.Marshal.Array
@@ -146,11 +148,11 @@ isShowCursor = toBool <$> ff_isShowCursor
 
 
 --------------------------------------------------------------------------------
-frame :: IO () -> IO ()
+frame :: MonadIO m => m () -> m ()
 frame block = do
-    ff_startFrame
+    liftIO ff_startFrame
     block
-    ff_endFrame
+    liftIO ff_endFrame
 {-# INLINE frame #-}
 
 
@@ -234,11 +236,11 @@ drawStringCentered (Font fptr) string =
 --------------------------------------------------------------------------------
 -- | Pushes the current transformation matrix on the stack, executes the given
 -- block of code and then pops the matrix again.
-pushMatrix :: IO () -> IO ()
+pushMatrix :: MonadIO m => m () -> m ()
 pushMatrix block = do
-    ff_pushMatrix
+    liftIO ff_pushMatrix
     block
-    ff_popMatrix
+    liftIO ff_popMatrix
 {-# INLINE pushMatrix #-}
 
 
@@ -264,11 +266,11 @@ scale (XY x' y') = ff_scale (realToFrac x') (realToFrac y')
 --------------------------------------------------------------------------------
 -- | Pushes the current color on a stack, execute the given block of code and
 -- pops the color again.
-pushColor :: IO () -> IO ()
+pushColor :: MonadIO m => m () -> m ()
 pushColor block = do
-    color <- getColor
+    color <- liftIO getColor
     block
-    setColor color
+    liftIO $ setColor color
 {-# INLINE pushColor #-}
 
 
