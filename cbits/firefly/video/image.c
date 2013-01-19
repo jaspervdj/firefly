@@ -10,7 +10,7 @@ ff_image *ff_imageCreate(int width, int height, int bpp) {
 #ifdef DEBUG
     printf("video/image/ff_imageCreate(%d, %d, %d)\n", width, height, bpp);
 #endif
-    
+
     image = malloc(sizeof(ff_image));
     image->width = width;
     image->height = height;

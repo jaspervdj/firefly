@@ -160,10 +160,10 @@ void ff_copyPixels(ff_image *image, GLubyte *dst, int dw, int dh) {
     for(y = 0; y < dh; y++) {
         for(x = 0; x < dw; x++) {
             for(b = 0; b < bpp; b++) {
-                dst[dw * bpp * y + bpp * x + b] = 
+                dst[dw * bpp * y + bpp * x + b] =
                     (x < sw && y < sh) ?
                         (GLubyte) image->pixels[sw * bpp * y + bpp * x + b] :
-                        0xff;
+                        0x00;
             }
         }
     }
