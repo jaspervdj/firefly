@@ -35,34 +35,34 @@ randomShape = do
         0 -> do
             p <- randomXY (100, 200)
             s <- randomXY (0, 200)
-            return $ F.ShapeBox (F.Box p s)
+            return $ F.BoxShape (F.Box p s)
         1 -> do
             p1 <- randomXY (100, 400)
             p2 <- randomXY (100, 400)
-            return $ F.ShapeLine p1 p2
+            return $ F.LineShape p1 p2
         2 -> do
             p1 <- randomXY (100, 400)
             p2 <- randomXY (100, 400)
             p3 <- randomXY (100, 400)
-            return $ F.ShapeTriangle p1 p2 p3
+            return $ F.TriangleShape p1 p2 p3
         _ -> do
             p <- randomXY (100, 400)
             r <- randomRIO (10, 100)
-            return $ F.ShapeCircle p r
+            return $ F.CircleShape p r
   where
     randomXY (lo, up) = XY <$> randomRIO (lo, up) <*> randomRIO (lo, up)
 
 
 --------------------------------------------------------------------------------
 setPos :: XY -> F.Shape -> F.Shape
-setPos _ F.ShapeEmpty              = F.ShapeEmpty
-setPos p (F.ShapeAppend s k)       =
-    F.ShapeAppend (setPos p s) (setPos p k)
-setPos p (F.ShapeBox (F.Box _ s))  = F.ShapeBox (F.Box p s)
-setPos p (F.ShapeLine p1 p2)        = F.ShapeLine p (p .+. p1 .-. p2)
-setPos p (F.ShapeTriangle p1 p2 p3) =
-    F.ShapeTriangle p (p .+. p2 .-. p1) (p .+. p3 .-. p1)
-setPos p (F.ShapeCircle _ r)        = F.ShapeCircle p r
+setPos _ F.EmptyShape               = F.EmptyShape
+setPos p (F.AppendShape s k)        =
+    F.AppendShape (setPos p s) (setPos p k)
+setPos p (F.BoxShape (F.Box _ s))   = F.BoxShape (F.Box p s)
+setPos p (F.LineShape p1 p2)        = F.LineShape p (p .+. p1 .-. p2)
+setPos p (F.TriangleShape p1 p2 p3) =
+    F.TriangleShape p (p .+. p2 .-. p1) (p .+. p3 .-. p1)
+setPos p (F.CircleShape _ r)        = F.CircleShape p r
 
 
 --------------------------------------------------------------------------------

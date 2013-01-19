@@ -48,49 +48,49 @@ collisionPoints (Collision ps) = ps
 --------------------------------------------------------------------------------
 data Shape
     -- | Empty shape: nothing can collide with this
-    = ShapeEmpty
+    = EmptyShape
     -- | A composition of two shapes
-    | ShapeAppend Shape Shape
+    | AppendShape Shape Shape
     -- | A box
-    | ShapeBox Box
+    | BoxShape Box
     -- | A line connecting two points
-    | ShapeLine XY XY
+    | LineShape XY XY
     -- | A triangle
-    | ShapeTriangle XY XY XY
+    | TriangleShape XY XY XY
     -- | A circle
-    | ShapeCircle XY Double
+    | CircleShape XY Double
     deriving (Show)
 
 
 --------------------------------------------------------------------------------
 instance Monoid Shape where
-    mempty  = ShapeEmpty
-    mappend = ShapeAppend
+    mempty  = EmptyShape
+    mappend = AppendShape
 
 
 --------------------------------------------------------------------------------
 -- | Check for collision between two shapes
 collision :: Shape -> Shape -> Collision
 -- TODO speed up with bounding boxes?
-collision ShapeEmpty _ = NoCollision
+collision EmptyShape _ = NoCollision
 
-collision (ShapeAppend s k) l = collision s l `mappend` collision k l
+collision (AppendShape s k) l = collision s l `mappend` collision k l
 
-collision s1@(ShapeBox b1) s2@(ShapeBox b2)
+collision s1@(BoxShape b1) s2@(BoxShape b2)
     -- Take advantage of laziness here
     | boxBoxCollision b1 b2 = Collision [] `mappend` slowCollision s1 s2
     | otherwise             = NoCollision
 
-collision (ShapeLine p1 p2) (ShapeLine q1 q2) =
+collision (LineShape p1 p2) (LineShape q1 q2) =
     lineLineIntersection p1 p2 q1 q2
 
-collision (ShapeCircle c1 r1) (ShapeCircle c2 r2) =
+collision (CircleShape c1 r1) (CircleShape c2 r2) =
     circleCircleCollision c1 r1 c2 r2
 
-collision (ShapeCircle c1 r) s =
+collision (CircleShape c1 r) s =
     slowCircleCollision c1 r s
 
-collision s (ShapeCircle c1 r) =
+collision s (CircleShape c1 r) =
     slowCircleCollision c1 r s
 
 collision s k = slowCollision s k
@@ -127,10 +127,10 @@ isCollision s1 s2 = case collision s1 s2 of
 --------------------------------------------------------------------------------
 -- | Get a bounding box for the given shape
 shapeBox :: Shape -> Maybe Box
-shapeBox ShapeEmpty        = Nothing
-shapeBox (ShapeAppend s k) = liftM2 appendBox (shapeBox s) (shapeBox k)
-shapeBox (ShapeBox b)      = Just b
-shapeBox (ShapeCircle p r) =
+shapeBox EmptyShape        = Nothing
+shapeBox (AppendShape s k) = liftM2 appendBox (shapeBox s) (shapeBox k)
+shapeBox (BoxShape b)      = Just b
+shapeBox (CircleShape p r) =
     let r' = XY r r in Just $ Box (p .-. r') (r' .* 2)
 shapeBox s                 = fitBox $ shapePoints s
 
@@ -138,15 +138,15 @@ shapeBox s                 = fitBox $ shapePoints s
 --------------------------------------------------------------------------------
 -- | Check if a point lies in a given shape
 insideShape :: XY -> Shape -> Bool
-insideShape _ ShapeEmpty = False
+insideShape _ EmptyShape = False
 
-insideShape p (ShapeAppend s k) = insideShape p s || insideShape p k
+insideShape p (AppendShape s k) = insideShape p s || insideShape p k
 
-insideShape p (ShapeBox box) = p `insideBox` box
+insideShape p (BoxShape box) = p `insideBox` box
 
-insideShape _ (ShapeLine _ _) = False
+insideShape _ (LineShape _ _) = False
 
-insideShape p (ShapeTriangle p1 p2 p3) =
+insideShape p (TriangleShape p1 p2 p3) =
     (u >= 0) && (v >= 0) && (u + v < 1)
   where
     v0 = p2 .-. p1
@@ -163,55 +163,55 @@ insideShape p (ShapeTriangle p1 p2 p3) =
     u = (dot11 * dot02 - dot01 * dot12) * invDenom
     v = (dot00 * dot12 - dot01 * dot02) * invDenom
 
-insideShape p (ShapeCircle c r) = insideCircle p c r
+insideShape p (CircleShape c r) = insideCircle p c r
 
 
 --------------------------------------------------------------------------------
 -- | Move the shape with an offset
 moveShape :: XY -> Shape -> Shape
-moveShape _ ShapeEmpty = ShapeEmpty
-moveShape o (ShapeAppend s k) =
-    ShapeAppend (moveShape o s) (moveShape o k)
-moveShape o (ShapeBox (Box pos size)) =
-    ShapeBox (Box (pos .+. o) size)
-moveShape o (ShapeLine p1 p2) = ShapeLine (p1 .+. o) (p2 .+. o)
-moveShape o (ShapeTriangle p1 p2 p3) =
-    ShapeTriangle (p1 .+. o) (p2 .+. o) (p3 .+. o)
-moveShape o (ShapeCircle p r) = ShapeCircle (p .+. o) r
+moveShape _ EmptyShape = EmptyShape
+moveShape o (AppendShape s k) =
+    AppendShape (moveShape o s) (moveShape o k)
+moveShape o (BoxShape (Box pos size)) =
+    BoxShape (Box (pos .+. o) size)
+moveShape o (LineShape p1 p2) = LineShape (p1 .+. o) (p2 .+. o)
+moveShape o (TriangleShape p1 p2 p3) =
+    TriangleShape (p1 .+. o) (p2 .+. o) (p3 .+. o)
+moveShape o (CircleShape p r) = CircleShape (p .+. o) r
 
 
 --------------------------------------------------------------------------------
 -- | Draw a shape: this is mostly meant for debugging purposes
 drawShape :: Shape -> IO ()
-drawShape ShapeEmpty = return ()
-drawShape (ShapeAppend s k) =
+drawShape EmptyShape = return ()
+drawShape (AppendShape s k) =
     drawShape s >> drawShape k
-drawShape (ShapeBox (Box pos size)) = pushMatrix $ do
+drawShape (BoxShape (Box pos size)) = pushMatrix $ do
     translate pos
     drawRectangle size
-drawShape (ShapeLine v1 v2) = drawLine [v1, v2]
-drawShape (ShapeTriangle v1 v2 v3) = drawTriangle v1 v2 v3
-drawShape (ShapeCircle p r) = pushMatrix $ do
+drawShape (LineShape v1 v2) = drawLine [v1, v2]
+drawShape (TriangleShape v1 v2 v3) = drawTriangle v1 v2 v3
+drawShape (CircleShape p r) = pushMatrix $ do
     translate p
     drawCircle r (floor r)
 
 
 --------------------------------------------------------------------------------
 shapePoints :: Shape -> [XY]
-shapePoints ShapeEmpty = []
-shapePoints (ShapeAppend s k) = shapePoints s ++ shapePoints k
-shapePoints (ShapeBox (Box (XY x' y') (XY w h))) =
+shapePoints EmptyShape = []
+shapePoints (AppendShape s k) = shapePoints s ++ shapePoints k
+shapePoints (BoxShape (Box (XY x' y') (XY w h))) =
     [XY x' y', XY x' (y' + h), XY (x' + w) (y' + h), XY (x' + w) y']
-shapePoints (ShapeLine p1 p2) = [p1, p2]
-shapePoints (ShapeTriangle p1 p2 p3) = [p1, p2, p3]
-shapePoints (ShapeCircle _ _) = []  -- TODO
+shapePoints (LineShape p1 p2) = [p1, p2]
+shapePoints (TriangleShape p1 p2 p3) = [p1, p2, p3]
+shapePoints (CircleShape _ _) = []  -- TODO
 
 
 --------------------------------------------------------------------------------
 shapeLines :: Shape -> [(XY, XY)]
-shapeLines ShapeEmpty = []
-shapeLines (ShapeAppend s k) = shapeLines s ++ shapeLines k
-shapeLines (ShapeLine p1 p2) = [(p1, p2)]
+shapeLines EmptyShape = []
+shapeLines (AppendShape s k) = shapeLines s ++ shapeLines k
+shapeLines (LineShape p1 p2) = [(p1, p2)]
 shapeLines s =
     -- General implementation for other shapes...
     let ps = shapePoints s
