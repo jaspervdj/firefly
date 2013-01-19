@@ -11,6 +11,7 @@ module Firefly.Math.XY
 
     , len
     , squaredLen
+    , distance
 
     , fromPolar
     , toPolar
@@ -89,6 +90,12 @@ len = sqrt . squaredLen
 squaredLen :: XY -> Double
 squaredLen (XY x' y') = x' * x' + y' * y'
 {-# INLINE squaredLen #-}
+
+
+--------------------------------------------------------------------------------
+distance :: XY -> XY -> Double
+distance l r = len (l .-. r)
+{-# INLINE distance #-}
 
 
 --------------------------------------------------------------------------------
