@@ -1,9 +1,9 @@
 Name:     firefly
 Version:  0.0.0.1
-Synopsis: Lightweight, fast and easy 2D game library 
+Synopsis: Lightweight, fast and easy 2D game library
 
-Description:         
-  Lightweight, fast and easy 2D game library 
+Description:
+  Lightweight, fast and easy 2D game library
 
 License:       BSD3
 License-file:  LICENSE
@@ -24,11 +24,18 @@ Extra-source-files:
   cbits/firefly/video/image.h
   cbits/firefly/video/texture.h
 
+Flag debug
+  Description: Print debug messages
+  Default:     True
+
 Library
-  Cc-options:     -DDEBUG -Wall -ggdb
+  Cc-options:     -Wall
   Ghc-options:    -Wall
   Hs-source-dirs: src
   Include-dirs:   cbits
+
+  If flag(debug)
+    Cc-options: -DDEBUG -ggdb
 
   C-sources:
     cbits/firefly/audio.c
@@ -40,7 +47,7 @@ Library
     cbits/firefly/video/image.c
     cbits/firefly/video/texture.c
 
-  Exposed-modules:     
+  Exposed-modules:
     Firefly
     Firefly.Audio
     Firefly.Audio.Sound
@@ -73,14 +80,14 @@ Library
       ../SDL_mixer-1.2.12
       ../freetype-2.4.10/include
       ../libpng-1.5.12/
-    
+
     Ld-options:
       -L../libpng-1.5.12
       -L../zlib-1.2.7
       -L../SDL_mixer-1.2.12/build/.libs
       -L../freetype-2.4.10/objs/.libs
       -L../SDL-1.2.15/build/.libs
-      
+
       -lpng
       -lz
       -lSDL_mixer
@@ -90,7 +97,7 @@ Library
       -lSDLmain
       -lSDL
       -mwindows
-    
+
   Else
     Pkgconfig-depends:
       freetype2,
@@ -100,19 +107,23 @@ Library
       SDL_mixer >= 1.2
 
 Executable firefly-example
-  Cpp-options:    -DDEBUG
   Hs-source-dirs: examples
   Main-is:        Main.hs
+
+  If flag(debug)
+    Cc-options: -DDEBUG -ggdb
 
   Build-depends:
     base    >= 4   && < 5,
     firefly >= 0.0 && < 0.1
 
 Executable firefly-collision
-  Cpp-options:    -DDEBUG
   Ghc-options:    -Wall
   Hs-source-dirs: examples
   Main-is:        collision.hs
+
+  If flag(debug)
+    Cc-options: -DDEBUG -ggdb
 
   Build-depends:
     base   >= 4   && < 5,
@@ -120,9 +131,11 @@ Executable firefly-collision
     firefly
 
 Executable firefly-histogram
-  Cpp-options:    -DDEBUG
   Hs-source-dirs: examples
   Main-is:        histogram.hs
+
+  If flag(debug)
+    Cc-options: -DDEBUG -ggdb
 
   Build-depends:
     base       >= 4   && < 5,
@@ -130,9 +143,11 @@ Executable firefly-histogram
     firefly
 
 Executable firefly-audio
-  Cpp-options:    -DDEBUG
   Hs-source-dirs: examples
   Main-is:        audio.hs
+
+  If flag(debug)
+    Cc-options: -DDEBUG -ggdb
 
   Build-depends:
     base    >= 4 && < 5,

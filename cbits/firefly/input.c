@@ -50,8 +50,8 @@ void ff_flushInput(void) {
             case SDL_QUIT:
 #ifdef DEBUG
                 printf("input/ff_flushInput: quit received\n");
-                global_quit = 1;
 #endif
+                global_quit = 1;
                 break;
             default:
                 break;
