@@ -186,14 +186,10 @@ drawShape :: Shape -> IO ()
 drawShape EmptyShape = return ()
 drawShape (AppendShape s k) =
     drawShape s >> drawShape k
-drawShape (BoxShape (Box pos size)) = pushMatrix $ do
-    translate pos
-    drawRectangle size
+drawShape (BoxShape (Box pos size)) = drawRectangle pos size
 drawShape (LineShape v1 v2) = drawLine [v1, v2]
 drawShape (TriangleShape v1 v2 v3) = drawTriangle v1 v2 v3
-drawShape (CircleShape p r) = pushMatrix $ do
-    translate p
-    drawCircle r (floor r)
+drawShape (CircleShape p r) = drawCircle p r (floor r)
 
 
 --------------------------------------------------------------------------------

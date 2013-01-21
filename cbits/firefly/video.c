@@ -110,107 +110,104 @@ void ff_vertex(double x, double y) {
     glVertex3d(x, y, 0.0d);
 }
 
-void ff_drawCircle(double r, int steps) {
+void ff_drawCircle(double x, double y, double r, int steps) {
     int i;
     double th = 0.0d;
     double d = 2.0d * M_PI / (double) steps;
 
     glBegin(GL_TRIANGLE_FAN);
-    glVertex3d(0.0d, 0.0d, 0.0d);
+    glVertex3d(x, y, 0.0d);
 
     for(i = 0; i < steps; i++) {
-        glVertex3d(r * cos(th), r * sin(th), 0.0d);
+        glVertex3d(x + r * cos(th), y + r * sin(th), 0.0d);
         th += d;
     }
 
-    glVertex3d(r, 0.0d, 0.0d);  /* Closing point */
+    glVertex3d(x + r, y, 0.0d);  /* Closing point */
 
     glEnd();
 }
 
-void ff_drawTexture(ff_texture *texture) {
+void ff_drawTexture(double x, double y, ff_texture *texture) {
     glEnable(GL_TEXTURE_2D);
     glBindTexture(GL_TEXTURE_2D, texture->texture);
 
     glBegin(GL_QUADS);
 
     glTexCoord2f(texture->ltc, texture->ttc);
-    glVertex2f(0.0f, 0.0f);
+    glVertex2f(x, y);
 
     glTexCoord2f(texture->ltc, texture->btc);
-    glVertex2f(0.0f, (GLfloat) texture->height);
+    glVertex2f(x, y + (GLfloat) texture->height);
 
     glTexCoord2f(texture->rtc, texture->btc);
-    glVertex2f((GLfloat) texture->width, (GLfloat) texture->height);
+    glVertex2f(x + (GLfloat) texture->width, y + (GLfloat) texture->height);
 
     glTexCoord2f(texture->rtc, texture->ttc);
-    glVertex2f((GLfloat) texture->width, 0.0f);
+    glVertex2f(x + (GLfloat) texture->width, y);
 
     glEnd();
 
     glDisable(GL_TEXTURE_2D);
 }
 
-void ff_drawTextureCentered(ff_texture *texture) {
-    glPushMatrix();
-    glTranslatef((float) -texture->width * 0.5f,
-            (float) -texture->height * 0.5f, 0.0f);
-    ff_drawTexture(texture);
-    glPopMatrix();
+void ff_drawTextureCentered(double x, double y, ff_texture *texture) {
+    ff_drawTexture(x - (double) -texture->width * 0.5f,
+            y - (double) texture->height * 0.5f, texture);
 }
 
-void ff_drawTextureDebug(ff_texture *texture) {
+void ff_drawTextureDebug(double x, double y, ff_texture *texture) {
     glColor3f(1.0f, 1.0f, 1.0f);
     glEnable(GL_TEXTURE_2D);
     glBindTexture(GL_TEXTURE_2D, texture->texture);
 
     glBegin(GL_QUADS);
     glTexCoord2f(0.0f, 0.0f);
-    glVertex2f(0.0f, 0.0f);
+    glVertex2f(x, y);
     glTexCoord2f(0.0f, 1.0f);
-    glVertex2f(0.0f, (GLfloat) texture->th);
+    glVertex2f(x, y + (GLfloat) texture->th);
     glTexCoord2f(1.0f, 1.0f);
-    glVertex2f((GLfloat) texture->tw, (GLfloat) texture->th);
+    glVertex2f(x + (GLfloat) texture->tw, y + (GLfloat) texture->th);
     glTexCoord2f(1.0f, 0.0f);
-    glVertex2f((GLfloat) texture->tw, 0.0f);
+    glVertex2f(x + (GLfloat) texture->tw, y);
     glEnd();
 
     glDisable(GL_TEXTURE_2D);
     glColor3f(1.0f, 0.0f, 0.0f);
     glBegin(GL_LINE_LOOP);
-    glVertex2f(0.0f, 0.0f);
-    glVertex2f(0.0f, (GLfloat) texture->height);
-    glVertex2f((GLfloat) texture->width, (GLfloat) texture->height);
-    glVertex2f((GLfloat) texture->width, 0.0f);
+    glVertex2f(x, y);
+    glVertex2f(x, y + (GLfloat) texture->height);
+    glVertex2f(x + (GLfloat) texture->width, y + (GLfloat) texture->height);
+    glVertex2f(x + (GLfloat) texture->width, x);
     glEnd();
     glDisable(GL_TEXTURE_2D);
 }
 
-void ff_drawString(ff_font *font,
+void ff_drawString(double x, double y, ff_font *font,
         const unsigned long *string, int stringLength) {
     int i;
     ff_glyph *glyph;
 
     glPushMatrix();
-    glTranslatef(0.0f, font->ascent, 0.0f);
+    glTranslatef(x, y + font->ascent, 0.0f);
     for(i = 0; i < stringLength; i++) {
         glyph = ff_fontLookupGlyph(font, string[i]);
 
         glTranslatef((GLfloat) glyph->left, (GLfloat) -glyph->top, 0.0f);
-        ff_drawTexture(glyph->texture);
+        ff_drawTexture(0.0d, 0.0d, glyph->texture);
         glTranslatef((GLfloat) (glyph->advance - glyph->left),
                 (GLfloat) glyph->top, 0.0f);
     }
     glPopMatrix();
 }
 
-void ff_drawStringCentered(ff_font *font,
+void ff_drawStringCentered(double x, double y, ff_font *font,
         const unsigned long *string, int stringLength) {
     double width = ff_fontStringWidth(font, string, stringLength);
 
     glPushMatrix();
     glTranslated(-width * 0.5d, 0.0d, 0.0d);
-    ff_drawString(font, string, stringLength);
+    ff_drawString(x, y, font, string, stringLength);
     glPopMatrix();
 }
 

@@ -28,15 +28,15 @@ void ff_endQuads(void);
 
 void ff_vertex(double x, double y);
 
-void ff_drawCircle(double r, int steps);
+void ff_drawCircle(double x, double y, double r, int steps);
 
-void ff_drawTexture(ff_texture *texture);
-void ff_drawTextureCentered(ff_texture *texture);
-void ff_drawTextureDebug(ff_texture *texture);
+void ff_drawTexture(double x, double y, ff_texture *texture);
+void ff_drawTextureCentered(double x, double y, ff_texture *texture);
+void ff_drawTextureDebug(double x, double y, ff_texture *texture);
 
-void ff_drawString(ff_font *font,
+void ff_drawString(double x, double y, ff_font *font,
         const unsigned long *string, int stringLength);
-void ff_drawStringCentered(ff_font *font,
+void ff_drawStringCentered(double x, double y, ff_font *font,
         const unsigned long *string, int stringLength);
 
 void ff_pushMatrix(void);

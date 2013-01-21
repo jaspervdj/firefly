@@ -79,13 +79,10 @@ loop xshape yshape font = do
         F.drawShape yshape
 
         F.setColor $ F.fromRgba 0.71 0.00 0.00 0.70
-        forM_ (F.collisionPoints col) $ \p -> F.pushMatrix $ do
-            F.translate p
-            F.drawCircle 5 10
+        forM_ (F.collisionPoints col) $ \p -> F.drawCircle p 5 10
 
-        F.translate $ F.fromInts (10, 500)
         F.setColor F.white
-        F.drawString font $ show col
+        F.drawString (F.XY 10 500) font $ show col
 
     F.flushInput
     quit   <- F.hasReceivedQuit

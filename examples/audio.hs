@@ -70,14 +70,13 @@ loop font sound = do
 
         -- Draw info text
         F.pushMatrix $ do
-            F.translate (F.XY 10 10)
-            F.drawString font "Up/Down keys to adjust music volume"
-            F.translate (F.XY 0 30)
-            F.drawString font $ "Current music volume: " ++ show volume
-            F.translate (F.XY 0 30)
-            F.drawString font $ "Left click to play a panned sound"
-            F.translate (F.XY 0 30)
-            F.drawString font $ "Right click to play a positioned sound"
+            F.drawString (F.XY 10 40) font "Up/Down keys to adjust music volume"
+            F.drawString (F.XY 10 90) font $
+                "Current music volume: " ++ show volume
+            F.drawString (F.XY 10 120) font $
+                "Left click to play a panned sound"
+            F.drawString (F.XY 10 150) font $
+                "Right click to play a positioned sound"
 
     F.delay 10
     unless quit $ loop font sound

@@ -55,26 +55,20 @@ loop background img font = do
     F.frame $ do
         let (sw, sh) = screenSize
 
-        F.pushMatrix $ do
-            F.translate $ F.XY (- ticks' * fromIntegral sw) 0
-            F.drawTexture background
-            F.translate $ F.XY (fromIntegral sw) 0
-            F.drawTexture background
+        F.drawTexture (F.XY (- ticks' * fromIntegral sw) 0) background
+        F.drawTexture (F.XY (fromIntegral sw) 0) background
 
-        F.pushMatrix $ F.pushColor $ do
-            F.translate $ F.fromInts (sw `div` 2, 0)
-
+        F.pushColor $ do
+            let pos = F.fromInts (sw `div` 2, 0)
             F.setColor $ F.fromRgba 0 0 0 0.2
-            F.drawStringCentered font "ラーメン"
-
-            F.translate $ F.fromInts (0, -5)
+            F.drawStringCentered pos font "ラーメン"
             F.setColor $ F.fromHsv ticks' 0.8 1
-            F.drawStringCentered font "ラーメン"
+            F.drawStringCentered (pos .-. F.XY 0 (-5)) font "ラーメン"
 
 
         F.translate $ XY 0 80 .+. F.fromInts screenSize ./ 2
         F.rotate $ 2 * pi * ticks'
-        F.drawTextureCentered img
+        F.drawTextureCentered (F.XY 0 0) img
 
         -- F.drawTextureDebug img
 

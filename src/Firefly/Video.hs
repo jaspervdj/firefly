@@ -74,17 +74,17 @@ foreign import ccall unsafe "ff_endQuads" ff_endQuads :: IO ()
 foreign import ccall unsafe "ff_vertex" ff_vertex
     :: CDouble -> CDouble -> IO ()
 foreign import ccall unsafe "ff_drawCircle" ff_drawCircle
-    :: CDouble -> CInt -> IO ()
+    :: CDouble -> CDouble -> CDouble -> CInt -> IO ()
 foreign import ccall unsafe "ff_drawTexture" ff_drawTexture
-    :: Ptr CTexture -> IO ()
+    :: CDouble -> CDouble -> Ptr CTexture -> IO ()
 foreign import ccall unsafe "ff_drawTextureCentered" ff_drawTextureCentered
-    :: Ptr CTexture -> IO ()
+    :: CDouble -> CDouble -> Ptr CTexture -> IO ()
 foreign import ccall unsafe "ff_drawTextureDebug" ff_drawTextureDebug
-    :: Ptr CTexture -> IO ()
+    :: CDouble -> CDouble -> Ptr CTexture -> IO ()
 foreign import ccall unsafe "ff_drawString" ff_drawString
-    :: Ptr CFont -> Ptr CULong -> CInt -> IO ()
+    :: CDouble -> CDouble -> Ptr CFont -> Ptr CULong -> CInt -> IO ()
 foreign import ccall unsafe "ff_drawStringCentered" ff_drawStringCentered
-    :: Ptr CFont -> Ptr CULong -> CInt -> IO ()
+    :: CDouble -> CDouble -> Ptr CFont -> Ptr CULong -> CInt -> IO ()
 foreign import ccall unsafe "ff_pushMatrix" ff_pushMatrix :: IO ()
 foreign import ccall unsafe "ff_popMatrix" ff_popMatrix :: IO ()
 foreign import ccall unsafe "ff_translate" ff_translate
@@ -184,9 +184,9 @@ drawQuad v1 v2 v3 v4 = do
 
 
 --------------------------------------------------------------------------------
-drawRectangle :: XY -> IO ()
-drawRectangle (XY w h) = drawQuad
-    (XY 0 0) (XY 0 h) (XY w h) (XY w 0)
+drawRectangle :: XY -> XY -> IO ()
+drawRectangle (XY x' y') (XY w h) = drawQuad
+    (XY x' y') (XY x' (y' + h)) (XY (x' + w) (y' + h)) (XY (x' + w) y')
 {-# INLINE drawRectangle #-}
 
 
@@ -197,39 +197,43 @@ vertex (XY x' y') = ff_vertex (realToFrac x') (realToFrac y')
 
 
 --------------------------------------------------------------------------------
-drawCircle :: Double -> Int -> IO ()
-drawCircle r steps = ff_drawCircle (realToFrac r) (fromIntegral steps)
+drawCircle :: XY -> Double -> Int -> IO ()
+drawCircle (XY x' y') r steps = ff_drawCircle
+    (realToFrac x') (realToFrac y') (realToFrac r) (fromIntegral steps)
 {-# INLINE drawCircle #-}
 
 
 --------------------------------------------------------------------------------
-drawTexture :: Texture -> IO ()
-drawTexture (Texture fptr) = withForeignPtr fptr ff_drawTexture
+drawTexture :: XY -> Texture -> IO ()
+drawTexture (XY x' y') (Texture fptr) = withForeignPtr fptr $
+    ff_drawTexture (realToFrac x') (realToFrac y')
 {-# INLINE drawTexture #-}
 
 
 --------------------------------------------------------------------------------
-drawTextureCentered :: Texture -> IO ()
-drawTextureCentered (Texture fptr) = withForeignPtr fptr ff_drawTextureCentered
+drawTextureCentered :: XY -> Texture -> IO ()
+drawTextureCentered (XY x' y') (Texture fptr) = withForeignPtr fptr $
+    ff_drawTextureCentered (realToFrac x') (realToFrac y')
 {-# INLINE drawTextureCentered #-}
 
 
 --------------------------------------------------------------------------------
-drawTextureDebug :: Texture -> IO ()
-drawTextureDebug (Texture fptr) = withForeignPtr fptr ff_drawTextureDebug
+drawTextureDebug :: XY -> Texture -> IO ()
+drawTextureDebug (XY x' y') (Texture fptr) = withForeignPtr fptr $
+    ff_drawTextureDebug (realToFrac x') (realToFrac y')
 
 
 --------------------------------------------------------------------------------
-drawString :: Font -> String -> IO ()
-drawString (Font fptr) string =
-    withForeignPtr fptr $ withUnicode string . ff_drawString
+drawString :: XY -> Font -> String -> IO ()
+drawString (XY x' y') (Font fptr) string = withForeignPtr fptr $
+    withUnicode string . ff_drawString (realToFrac x') (realToFrac y')
 {-# INLINE drawString #-}
 
 
 --------------------------------------------------------------------------------
-drawStringCentered :: Font -> String -> IO ()
-drawStringCentered (Font fptr) string =
-    withForeignPtr fptr $ withUnicode string . ff_drawStringCentered
+drawStringCentered :: XY -> Font -> String -> IO ()
+drawStringCentered (XY x' y') (Font fptr) string = withForeignPtr fptr $
+    withUnicode string . ff_drawStringCentered (realToFrac x') (realToFrac y')
 {-# INLINE drawStringCentered #-}
 
 
