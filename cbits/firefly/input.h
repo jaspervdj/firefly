@@ -9,6 +9,7 @@ int ff_isGrabInput(void);
 
 void ff_flushInput(void);
 
+void ff_sendQuit(void);
 int ff_hasReceivedQuit(void);
 
 int ff_isKeyDown(int key);

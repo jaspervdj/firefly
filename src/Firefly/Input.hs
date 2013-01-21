@@ -9,6 +9,7 @@ module Firefly.Input
 
     , flushInput
 
+    , sendQuit
     , hasReceivedQuit
 
     , isKeyDown
@@ -37,6 +38,8 @@ foreign import ccall unsafe "ff_setGrabInput" ff_setGrabInput
 foreign import ccall unsafe "ff_isGrabInput" ff_isGrabInput
     :: IO CInt
 foreign import ccall unsafe "ff_flushInput" ff_flushInput
+    :: IO ()
+foreign import ccall unsafe "ff_sendQuit" ff_sendQuit
     :: IO ()
 foreign import ccall unsafe "ff_hasReceivedQuit" ff_hasReceivedQuit
     :: IO CInt
@@ -77,6 +80,14 @@ isGrabInput = fmap toBool ff_isGrabInput
 flushInput :: IO ()
 flushInput = ff_flushInput
 {-# INLINE flushInput #-}
+
+
+--------------------------------------------------------------------------------
+-- | Send a quit signal. This does *not* automatically kill the program, you
+-- should manually check 'hasReceivedQuit' in your game loop.
+sendQuit :: IO ()
+sendQuit = ff_sendQuit
+{-# INLINE sendQuit #-}
 
 
 --------------------------------------------------------------------------------

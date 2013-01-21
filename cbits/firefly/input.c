@@ -69,6 +69,10 @@ void ff_flushInput(void) {
     global_mouseButtons = SDL_GetMouseState(&global_mouseX, &global_mouseY);
 }
 
+void ff_sendQuit(void) {
+    global_quit = 1;
+}
+
 int ff_hasReceivedQuit(void) {
     return global_quit;
 }
