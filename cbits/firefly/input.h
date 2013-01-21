@@ -1,6 +1,9 @@
 #ifndef FIREFLY_INPUT_H
 #define FIREFLY_INPUT_H
 
+void ff_initInput(void);
+void ff_quitInput(void);
+
 void ff_setGrabInput(int grabInput);
 int ff_isGrabInput(void);
 

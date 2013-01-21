@@ -17,6 +17,14 @@ char global_keyReleased[NUM_KEYS];
 char global_mouseButtonPressed[NUM_MOUSEBUTTONS];
 char global_mouseButtonReleased[NUM_MOUSEBUTTONS];
 
+void ff_initInput(void) {
+    global_quit = 0;
+}
+
+void ff_quitInput(void) {
+    return;
+}
+
 void ff_setGrabInput(int grabInput) {
     SDL_WM_GrabInput(grabInput ? SDL_GRAB_ON : SDL_GRAB_OFF);
 }

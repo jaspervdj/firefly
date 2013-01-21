@@ -2,6 +2,7 @@
 #include <stdio.h>
 
 #include "firefly/audio.h"
+#include "firefly/input.h"
 #include "firefly/engine.h"
 
 void ff_init(void) {
@@ -10,6 +11,7 @@ void ff_init(void) {
 #endif
 
     SDL_Init(SDL_INIT_EVERYTHING);
+    ff_initInput();
     ff_initAudio();
 }
 
@@ -19,6 +21,7 @@ void ff_quit(void) {
 #endif
 
     ff_quitAudio();
+    ff_quitInput();
     SDL_Quit();
 }
 
