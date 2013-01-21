@@ -152,8 +152,11 @@ void ff_drawTexture(double x, double y, ff_texture *texture) {
 }
 
 void ff_drawTextureCentered(double x, double y, ff_texture *texture) {
-    ff_drawTexture(x - (double) -texture->width * 0.5f,
-            y - (double) texture->height * 0.5f, texture);
+    glPushMatrix();
+    glTranslatef((GLfloat) -texture->width * 0.5f,
+            (GLfloat) -texture->height * 0.5f, 0.0f);
+    ff_drawTexture(x, y, texture);
+    glPopMatrix();
 }
 
 void ff_drawTextureDebug(double x, double y, ff_texture *texture) {
