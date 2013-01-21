@@ -5,6 +5,7 @@ module Firefly.Video.Font
     , fontFromTtf
     , fontSize
     , fontStringWidth
+    , fontWrapLines
     ) where
 
 
@@ -61,3 +62,24 @@ fontStringWidth (Font fptr) string = unsafePerformIO $ do
     width <- withForeignPtr fptr $ withUnicode string . ff_fontStringWidth
     return $ realToFrac width
 {-# INLINE fontStringWidth #-}
+
+
+--------------------------------------------------------------------------------
+-- | Wrap a long line into shorter lines, based on the maximum width argument.
+-- When drawing each shorter line, it will be at most as wide as the maximum
+-- width, unless it consists of a single insanely long word.
+fontWrapLines :: Font      -- ^ Font to use
+              -> Double    -- ^ Maximum width
+              -> String    -- ^ Long line to wrap
+              -> [String]  -- ^ Resulting lines
+fontWrapLines font maxW = go 0 [] . words
+  where
+    spaceW           = fontStringWidth font " "
+    go _ l []        = [unwords $ reverse l]
+    go w l (x : xs)
+        | null l     = go wordW [x] xs
+        | w' <= maxW = go w' (x : l) xs
+        | otherwise  = (unwords $ reverse l) : go wordW [x] xs
+      where
+        wordW = fontStringWidth font x
+        w'    = w + spaceW + wordW

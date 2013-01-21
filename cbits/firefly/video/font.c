@@ -161,16 +161,13 @@ double ff_fontStringWidth(ff_font *font,
     int i;
     ff_glyph *glyph;
 
-    /* Take the advance of each character */
-    for(i = 0; i + 1 < stringLength; i++) {
+    /* Take the advance of each character. Note: previously we were using the
+     * advance of the of the first N-1 characters and then the width of the last
+     * one. However, this does not work when the last character is e.g. a
+     * space. */
+    for(i = 0; i < stringLength; i++) {
         glyph = ff_fontLookupGlyph(font, string[i]);
         width += (double) glyph->advance;
-    }
-
-    /* And the width of the last */
-    if(i < stringLength) {
-        glyph = ff_fontLookupGlyph(font, string[i]);
-        width += (double) glyph->texture->width;
     }
 
     return width;
