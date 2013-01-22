@@ -23,7 +23,11 @@ Outside of Haskell, Firefly depends on:
 - SDL_mixer, for loading and playing sounds;
 - SDL, for pretty much anything else.
 
-It should relatively painless to install these on your operating system.
+It should relatively painless to install these on your operating system. On
+Ubuntu 12.04, the following command seems to work:
+
+    apt-get install libfreetype6-dev libgl1-mesa-dev libpng12-dev \
+        libsdl1.2-dev libsdl-mixer1.2-dev
 
 Missing functionality
 ---------------------
