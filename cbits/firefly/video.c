@@ -17,8 +17,11 @@ void ff_setVideoMode(int width, int height, int fullScreen) {
 #endif
     global_fullScreen = fullScreen;
 
+    /* Figure out bits per pixel */
+    Uint32 bpp = SDL_GetVideoInfo()->vfmt->BitsPerPixel;
+
     if(fullScreen) flags |= SDL_FULLSCREEN;
-    SDL_SetVideoMode(width, height, 24, flags);
+    SDL_SetVideoMode(width, height, bpp, flags);
 
     /* Enable textures, and transparent texures */
     glEnable(GL_TEXTURE_2D);
@@ -33,6 +36,12 @@ void ff_setVideoMode(int width, int height, int fullScreen) {
     glOrtho(0.0f, width, height, 0.0f, -1.0f, 1.0f);
 
     glMatrixMode(GL_MODELVIEW);
+
+#ifdef DEBUG
+    printf("video/ff_setVideoMode: Using Open %s by %s on renderer %s\n",
+            glGetString(GL_VERSION), glGetString(GL_VENDOR),
+            glGetString(GL_RENDERER));
+#endif
 }
 
 int ff_getScreenWidth(void) {
