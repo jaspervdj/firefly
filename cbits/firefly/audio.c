@@ -8,7 +8,7 @@
 
 Mix_Music *global_music = 0;
 char *global_musicFilePath = 0;
-double global_musicVolume = 1.0d;
+double global_musicVolume = 1.0;
 
 void ff_initAudio(void) {
 #ifdef DEBUG
@@ -64,7 +64,7 @@ void ff_stopMusic() {
 }
 
 void ff_setMusicVolume(double volume) {
-    int v = (int) (volume * (double) MIX_MAX_VOLUME + 0.5d);
+    int v = (int) (volume * (double) MIX_MAX_VOLUME + 0.5);
     global_musicVolume = volume;
     Mix_VolumeMusic(v);
 }
@@ -80,21 +80,21 @@ void ff_playSound(ff_sound *sound) {
 
 void ff_playSoundPanning(ff_sound *sound, double panning, double distance) {
     int channel = ff_getFreeChannel();
-    Uint8 right = (Uint8) (panning * 254.0d);
-    Mix_SetDistance(channel, (Uint8) (distance * 255.0d));
+    Uint8 right = (Uint8) (panning * 254.0);
+    Mix_SetDistance(channel, (Uint8) (distance * 255.0));
     Mix_SetPanning(channel, 254 - right, right);
     Mix_PlayChannel(channel, sound->chunk, 0);
 }
 
 void ff_playSoundPosition(ff_sound *sound, double angle, double distance) {
     int channel = ff_getFreeChannel();
-    int degrees = (int) (angle * 180.0d / M_PI);
+    int degrees = (int) (angle * 180.0 / M_PI);
 
     degrees += 90;  /* Adjust for inconsistency between polars and SDL_Mixer */
     degrees %= 360;
     if(degrees < 0) degrees += 360;
 
-    Mix_SetPosition(channel, (Sint16) degrees, (Uint8) (distance * 255.0d));
+    Mix_SetPosition(channel, (Sint16) degrees, (Uint8) (distance * 255.0));
     Mix_PlayChannel(channel, sound->chunk, 0);
 }
 

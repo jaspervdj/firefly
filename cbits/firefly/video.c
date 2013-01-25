@@ -116,23 +116,23 @@ void ff_endQuads(void) {
 }
 
 void ff_vertex(double x, double y) {
-    glVertex3d(x, y, 0.0d);
+    glVertex3d(x, y, 0.0);
 }
 
 void ff_drawCircle(double x, double y, double r, int steps) {
     int i;
-    double th = 0.0d;
-    double d = 2.0d * M_PI / (double) steps;
+    double th = 0.0;
+    double d = 2.0 * M_PI / (double) steps;
 
     glBegin(GL_TRIANGLE_FAN);
-    glVertex3d(x, y, 0.0d);
+    glVertex3d(x, y, 0.0);
 
     for(i = 0; i < steps; i++) {
-        glVertex3d(x + r * cos(th), y + r * sin(th), 0.0d);
+        glVertex3d(x + r * cos(th), y + r * sin(th), 0.0);
         th += d;
     }
 
-    glVertex3d(x + r, y, 0.0d);  /* Closing point */
+    glVertex3d(x + r, y, 0.0);  /* Closing point */
 
     glEnd();
 }
@@ -206,7 +206,7 @@ void ff_drawString(double x, double y, ff_font *font,
         glyph = ff_fontLookupGlyph(font, string[i]);
 
         glTranslatef((GLfloat) glyph->left, (GLfloat) -glyph->top, 0.0f);
-        ff_drawTexture(0.0d, 0.0d, glyph->texture);
+        ff_drawTexture(0.0, 0.0, glyph->texture);
         glTranslatef((GLfloat) (glyph->advance - glyph->left),
                 (GLfloat) glyph->top, 0.0f);
     }
@@ -218,7 +218,7 @@ void ff_drawStringCentered(double x, double y, ff_font *font,
     double width = ff_fontStringWidth(font, string, stringLength);
 
     glPushMatrix();
-    glTranslated(-width * 0.5d, 0.0d, 0.0d);
+    glTranslated(-width * 0.5, 0.0, 0.0);
     ff_drawString(x, y, font, string, stringLength);
     glPopMatrix();
 }
@@ -232,15 +232,15 @@ void ff_popMatrix(void) {
 }
 
 void ff_translate(double x, double y) {
-    glTranslated(x, y, 0.0d);
+    glTranslated(x, y, 0.0);
 }
 
 void ff_rotate(double r) {
-    glRotated(r * 180.0d / M_PI, 0.0d, 0.0d, 1.0d);
+    glRotated(r * 180.0 / M_PI, 0.0, 0.0, 1.0);
 }
 
 void ff_scale(double x, double y) {
-    glScaled(x, y, 1.0d);
+    glScaled(x, y, 1.0);
 }
 
 void ff_setColor(double r, double g, double b, double a) {
