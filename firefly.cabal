@@ -29,7 +29,7 @@ Flag debug
   Default:     True
 
 Library
-  Cc-options:     -Wall
+  Cc-options:     -Wall -Wextra -pedantic -ansi
   Ghc-options:    -Wall
   Hs-source-dirs: src
   Include-dirs:   cbits

@@ -35,12 +35,12 @@ int ff_isGrabInput(void) {
 }
 
 void ff_flushInput(void) {
+    SDL_Event event;
+
     memset(global_keyPressed, 0, NUM_KEYS * sizeof(char));
     memset(global_keyReleased, 0, NUM_KEYS * sizeof(char));
     memset(global_mouseButtonPressed, 0, NUM_MOUSEBUTTONS * sizeof(char));
     memset(global_mouseButtonReleased, 0, NUM_MOUSEBUTTONS * sizeof(char));
-
-    SDL_Event event;
     while(SDL_PollEvent(&event)) {
         switch(event.type) {
             case SDL_KEYDOWN:

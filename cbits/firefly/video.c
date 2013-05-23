@@ -11,6 +11,7 @@ int global_fullScreen = 0;
 
 void ff_setVideoMode(int width, int height, int fullScreen) {
     int flags = VIDEO_FLAGS;
+    Uint32 bpp;
 
 #ifdef DEBUG
     printf("video/ff_setVideoMode(%d, %d, %d)\n", width, height, fullScreen);
@@ -18,7 +19,7 @@ void ff_setVideoMode(int width, int height, int fullScreen) {
     global_fullScreen = fullScreen;
 
     /* Figure out bits per pixel */
-    Uint32 bpp = SDL_GetVideoInfo()->vfmt->BitsPerPixel;
+    bpp = SDL_GetVideoInfo()->vfmt->BitsPerPixel;
 
     if(fullScreen) flags |= SDL_FULLSCREEN;
     SDL_SetVideoMode(width, height, bpp, flags);

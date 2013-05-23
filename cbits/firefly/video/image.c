@@ -1,5 +1,6 @@
 #include <stdio.h>
 #include <stdlib.h>
+#include <string.h>
 #include <png.h>
 
 #include "firefly/video/image.h"
@@ -30,8 +31,8 @@ ff_image *ff_imageFromPng(const char *filePath) {
     png_uint_32 width, height;
     int bitDepth, colorType, interlaceType;
     png_byte **rowp;
-    int x, y, b;
-    int bpp;
+    unsigned int x, y, b;
+    unsigned int bpp;
     ff_image *image;
 
 #ifdef DEBUG
