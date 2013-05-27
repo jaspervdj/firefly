@@ -99,8 +99,8 @@ distance l r = len (l .-. r)
 
 
 --------------------------------------------------------------------------------
-fromPolar :: Double  -- ^ Angle in radians
-          -> Double  -- ^ Radius
+fromPolar :: Double  -- ^ Radius
+          -> Double  -- ^ Angle in radians
           -> XY      -- ^ Resulting cartesian coordinates
 fromPolar r th = XY (r * cos th) (r * sin th)
 {-# INLINE fromPolar #-}

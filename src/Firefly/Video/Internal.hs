@@ -2,7 +2,7 @@
 module Firefly.Video.Internal
     ( CImage
     , Image (..)
-    
+
     , CTexture
     , Texture (..)
 
