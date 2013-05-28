@@ -33,6 +33,7 @@ void ff_drawCircle(double x, double y, double r, int steps);
 void ff_drawTexture(double x, double y, ff_texture *texture);
 void ff_drawTextureCentered(double x, double y, ff_texture *texture);
 void ff_drawTextureDebug(double x, double y, ff_texture *texture);
+void ff_drawTextures(double *xys, ff_texture **textures, int num);
 
 void ff_drawString(double x, double y, ff_font *font,
         const unsigned long *string, int stringLength);

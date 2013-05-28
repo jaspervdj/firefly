@@ -196,6 +196,39 @@ void ff_drawTextureDebug(double x, double y, ff_texture *texture) {
     glDisable(GL_TEXTURE_2D);
 }
 
+void ff_drawTextures(double *xys, ff_texture** textures, int num) {
+    int i;
+    double x, y;
+    ff_texture *texture;
+
+    if(num <= 0) return;
+
+    glEnable(GL_TEXTURE_2D);
+    glBindTexture(GL_TEXTURE_2D, textures[0]->texture);
+    glBegin(GL_QUADS);
+
+    for(i = 0; i < num; i++) {
+        x = xys[i * 2];
+        y = xys[i * 2 + 1];
+        texture = textures[i];
+
+        glTexCoord2f(texture->ltc, texture->ttc);
+        glVertex2f(x, y);
+
+        glTexCoord2f(texture->ltc, texture->btc);
+        glVertex2f(x, y + (GLfloat) texture->height);
+
+        glTexCoord2f(texture->rtc, texture->btc);
+        glVertex2f(x + (GLfloat) texture->width, y + (GLfloat) texture->height);
+
+        glTexCoord2f(texture->rtc, texture->ttc);
+        glVertex2f(x + (GLfloat) texture->width, y);
+    }
+
+    glEnd();
+    glDisable(GL_TEXTURE_2D);
+}
+
 void ff_drawString(double x, double y, ff_font *font,
         const unsigned long *string, int stringLength) {
     int i;

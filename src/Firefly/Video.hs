@@ -20,6 +20,7 @@ module Firefly.Video
     , drawTexture
     , drawTextureCentered
     , drawTextureDebug
+    , drawTextures
 
     , drawString
     , drawStringCentered
@@ -37,10 +38,12 @@ module Firefly.Video
 
 
 --------------------------------------------------------------------------------
-import           Control.Applicative    ((<$>))
-import           Control.Monad.Trans    (MonadIO, liftIO)
+import           Control.Applicative            ((<$>))
+import           Control.Monad                  (forM_)
+import           Control.Monad.Trans            (MonadIO, liftIO)
 import           Foreign.C.Types
-import           Foreign.ForeignPtr
+import           Foreign.ForeignPtr.Safe
+import           Foreign.ForeignPtr.Unsafe      (unsafeForeignPtrToPtr)
 import           Foreign.Marshal.Array
 import           Foreign.Ptr
 import           Foreign.Storable
@@ -82,6 +85,8 @@ foreign import ccall unsafe "ff_drawTextureCentered" ff_drawTextureCentered
     :: CDouble -> CDouble -> Ptr CTexture -> IO ()
 foreign import ccall unsafe "ff_drawTextureDebug" ff_drawTextureDebug
     :: CDouble -> CDouble -> Ptr CTexture -> IO ()
+foreign import ccall unsafe "ff_drawTextures" ff_drawTextures
+    :: Ptr CDouble -> Ptr (Ptr CTexture) -> CInt -> IO ()
 foreign import ccall unsafe "ff_drawString" ff_drawString
     :: CDouble -> CDouble -> Ptr CFont -> Ptr CULong -> CInt -> IO ()
 foreign import ccall unsafe "ff_drawStringCentered" ff_drawStringCentered
@@ -222,6 +227,26 @@ drawTextureCentered (XY x' y') (Texture fptr) = withForeignPtr fptr $
 drawTextureDebug :: XY -> Texture -> IO ()
 drawTextureDebug (XY x' y') (Texture fptr) = withForeignPtr fptr $
     ff_drawTextureDebug (realToFrac x') (realToFrac y')
+
+
+--------------------------------------------------------------------------------
+-- | Note that in order for this to work, all textures should be sliced from the
+-- same original texture. This is not checked!
+drawTextures :: [(XY, Texture)] -> IO ()
+drawTextures ls =
+    allocaArray len'       $ \tsptr  ->
+    allocaArray (len' * 2) $ \xysptr -> do
+        forM_ (zip [0 ..] ls) $ \(i, (XY x' y', Texture fptr)) -> do
+            pokeElemOff tsptr  i           (unsafeForeignPtrToPtr fptr)
+            pokeElemOff xysptr (i * 2)     (realToFrac x')
+            pokeElemOff xysptr (i * 2 + 1) (realToFrac y')
+
+        ff_drawTextures xysptr tsptr (fromIntegral len')
+
+        forM_ ls $ \(_, Texture fptr) ->
+            touchForeignPtr fptr
+  where
+    len' = length ls
 
 
 --------------------------------------------------------------------------------
