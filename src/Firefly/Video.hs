@@ -51,6 +51,7 @@ import           Firefly.Internal
 import           Firefly.Math.XY
 import           Firefly.Video.Color
 import           Firefly.Video.Internal
+import           Firefly.Video.Texture.Internal
 
 
 --------------------------------------------------------------------------------

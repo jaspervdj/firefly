@@ -6,6 +6,7 @@
 #include "firefly/video/image.h"
 
 typedef struct {
+    int id;
     int width, height;
     int bpp;
     int tw, th; /* Powers of two */
@@ -19,6 +20,7 @@ ff_texture *ff_textureFromImage(ff_image *image);
 ff_texture *ff_textureFromPng(const char *filePath);
 void ff_textureFree(ff_texture *texture);
 
+int ff_textureId(ff_texture *texture);
 int ff_textureWidth(ff_texture *texture);
 int ff_textureHeight(ff_texture *texture);
 

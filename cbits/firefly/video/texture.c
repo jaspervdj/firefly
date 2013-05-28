@@ -3,6 +3,9 @@
 
 #include "firefly/video/texture.h"
 
+/* Global for ID */
+int global_texture_id = 0;
+
 ff_texture *ff_textureFromImage(ff_image *image) {
     ff_texture *texture;
     GLenum format;
@@ -14,6 +17,7 @@ ff_texture *ff_textureFromImage(ff_image *image) {
 
     texture = malloc(sizeof(ff_texture));
 
+    texture->id = global_texture_id++;
     texture->width = image->width;
     texture->height = image->height;
     texture->bpp = image->bpp;
@@ -89,6 +93,10 @@ void ff_textureFree(ff_texture *texture) {
     free(texture);
 }
 
+int ff_textureId(ff_texture *texture) {
+    return texture->id;
+}
+
 int ff_textureWidth(ff_texture *texture) {
     return texture->width;
 }
@@ -107,6 +115,7 @@ ff_texture *ff_textureSlice(ff_texture *texture,
 #endif
 
     sub = malloc(sizeof(ff_texture));
+    sub->id = global_texture_id++;
     sub->width = width;
     sub->height = height;
     sub->bpp = texture->bpp;
