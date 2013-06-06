@@ -169,15 +169,14 @@ insideShape p (CircleShape c r) = insideCircle p c r
 --------------------------------------------------------------------------------
 -- | Move the shape with an offset
 moveShape :: XY -> Shape -> Shape
-moveShape _ EmptyShape = EmptyShape
-moveShape o (AppendShape s k) =
+moveShape _ EmptyShape               = EmptyShape
+moveShape o (AppendShape s k)        =
     AppendShape (moveShape o s) (moveShape o k)
-moveShape o (BoxShape (Box pos size)) =
-    BoxShape (Box (pos .+. o) size)
-moveShape o (LineShape p1 p2) = LineShape (p1 .+. o) (p2 .+. o)
+moveShape o (BoxShape box)           = BoxShape (moveBox o box)
+moveShape o (LineShape p1 p2)        = LineShape (p1 .+. o) (p2 .+. o)
 moveShape o (TriangleShape p1 p2 p3) =
     TriangleShape (p1 .+. o) (p2 .+. o) (p3 .+. o)
-moveShape o (CircleShape p r) = CircleShape (p .+. o) r
+moveShape o (CircleShape p r)        = CircleShape (p .+. o) r
 
 
 --------------------------------------------------------------------------------
