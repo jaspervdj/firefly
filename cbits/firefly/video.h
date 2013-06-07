@@ -5,7 +5,7 @@
 #include "firefly/video/texture.h"
 
 void ff_setVideoMode(int width, int height, int fullScreen);
-
+void ff_setScreenSize(int width, int height);
 int ff_getScreenWidth(void);
 int ff_getScreenHeight(void);
 int ff_isFullScreen(void);

@@ -8,13 +8,16 @@
 #define VIDEO_FLAGS (SDL_OPENGL | SDL_DOUBLEBUF)
 
 int global_fullScreen = 0;
+int global_screenWidth = 0;
+int global_screenHeight = 0;
 
 void ff_setVideoMode(int width, int height, int fullScreen) {
     int flags = VIDEO_FLAGS;
     Uint32 bpp;
 
 #ifdef DEBUG
-    printf("video/ff_setVideoMode(%d, %d, %d)\n", width, height, fullScreen);
+    printf("video/ff_setVideoMode(%d, %d, %d)\n",
+            width, height, fullScreen);
 #endif
     global_fullScreen = fullScreen;
 
@@ -31,12 +34,7 @@ void ff_setVideoMode(int width, int height, int fullScreen) {
 
     glClearColor(0.0f, 0.0f, 0.0f, 0.0f);
     glViewport(0, 0, width, height);
-
-    glMatrixMode(GL_PROJECTION);
-    glLoadIdentity();
-    glOrtho(0.0f, width, height, 0.0f, -1.0f, 1.0f);
-
-    glMatrixMode(GL_MODELVIEW);
+    ff_setScreenSize(width, height);
 
 #ifdef DEBUG
     printf("video/ff_setVideoMode: Using Open %s by %s on renderer %s\n",
@@ -45,14 +43,22 @@ void ff_setVideoMode(int width, int height, int fullScreen) {
 #endif
 }
 
+void ff_setScreenSize(int width, int height) {
+    global_screenWidth = width;
+    global_screenHeight = height;
+
+    glMatrixMode(GL_PROJECTION);
+    glLoadIdentity();
+    glOrtho(0.0f, width, height, 0.0f, -1.0f, 1.0f);
+    glMatrixMode(GL_MODELVIEW);
+}
+
 int ff_getScreenWidth(void) {
-    SDL_Surface *screen = SDL_GetVideoSurface();
-    return screen->w;
+    return global_screenWidth;
 }
 
 int ff_getScreenHeight(void) {
-    SDL_Surface *screen = SDL_GetVideoSurface();
-    return screen->h;
+    return global_screenHeight;
 }
 
 int ff_isFullScreen(void) {

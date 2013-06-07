@@ -2,6 +2,7 @@
 {-# LANGUAGE ForeignFunctionInterface #-}
 module Firefly.Video
     ( setVideoMode
+    , setScreenSize
     , getScreenSize
     , isFullScreen
     , getFullScreenModes
@@ -60,6 +61,8 @@ import           Firefly.Video.Texture.Internal
 --------------------------------------------------------------------------------
 foreign import ccall unsafe "ff_setVideoMode" ff_setVideoMode
     :: CInt -> CInt -> CInt -> IO ()
+foreign import ccall unsafe "ff_setScreenSize" ff_setScreenSize
+    :: CInt -> CInt -> IO ()
 foreign import ccall unsafe "ff_getScreenWidth" ff_getScreenWidth :: IO CInt
 foreign import ccall unsafe "ff_getScreenHeight" ff_getScreenHeight :: IO CInt
 foreign import ccall unsafe "ff_isFullScreen" ff_isFullScreen :: IO CInt
@@ -110,6 +113,13 @@ setVideoMode :: (Int, Int) -> Bool -> IO ()
 setVideoMode (width, height) fullScreen = ff_setVideoMode
     (fromIntegral width) (fromIntegral height) (fromBool fullScreen)
 {-# INLINE setVideoMode #-}
+
+
+--------------------------------------------------------------------------------
+setScreenSize :: (Int, Int) -> IO ()
+setScreenSize (width, height) = ff_setScreenSize
+    (fromIntegral width) (fromIntegral height)
+{-# INLINE setScreenSize #-}
 
 
 --------------------------------------------------------------------------------
