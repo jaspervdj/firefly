@@ -7,6 +7,7 @@ module Firefly.Math.Box
     , insideBox
     , boxBoxCollision
     , moveBox
+    , boxCenter
     ) where
 
 
@@ -74,3 +75,9 @@ boxBoxCollision (Box (XY x1 y1) (XY w1 h1)) (Box (XY x2 y2) (XY w2 h2))
 moveBox :: XY -> Box -> Box
 moveBox offset (Box pos size) = Box (pos .+. offset) size
 {-# INLINE moveBox #-}
+
+
+--------------------------------------------------------------------------------
+boxCenter :: Box -> XY
+boxCenter (Box pos size) = pos .+. size .* 0.5
+{-# INLINE boxCenter #-}
