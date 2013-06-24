@@ -14,6 +14,8 @@ int ff_getFullScreenModes(int maxModes, int *modes);
 void ff_setShowCursor(int showCursor);
 int ff_isShowCursor(void);
 
+void ff_setSmoothLines(int smoothLines);
+
 void ff_startFrame(void);
 void ff_endFrame(void);
 
@@ -27,6 +29,8 @@ void ff_startQuads(void);
 void ff_endQuads(void);
 
 void ff_vertex(double x, double y);
+
+void ff_drawLines(double *xys, int num);
 
 void ff_drawCircle(double x, double y, double r, int steps);
 
@@ -49,5 +53,7 @@ void ff_scale(double x, double y);
 void ff_setColor(double r, double g, double b, double a);
 void ff_getColor(double *rgba);
 void ff_setBackgroundColor(double r, double g, double b, double a);
+
+void ff_setLineWidth(double lw);
 
 #endif

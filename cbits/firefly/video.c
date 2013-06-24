@@ -88,6 +88,15 @@ int ff_isShowCursor(void) {
     return showCursor == SDL_ENABLE ? 1 : 0;
 }
 
+void ff_setSmoothLines(int smoothLines) {
+    if(smoothLines) {
+        glEnable(GL_LINE_SMOOTH);
+        glHint(GL_LINE_SMOOTH_HINT, GL_NICEST);
+    } else {
+        glDisable(GL_LINE_SMOOTH);
+    }
+}
+
 void ff_startFrame(void) {
     glClear(GL_COLOR_BUFFER_BIT);
     glLoadIdentity();
@@ -124,6 +133,14 @@ void ff_endQuads(void) {
 
 void ff_vertex(double x, double y) {
     glVertex3d(x, y, 0.0);
+}
+
+void ff_drawLines(double *xys, int num) {
+    int i;
+
+    glBegin(GL_LINE_STRIP);
+    for(i = 0; i < num; i++) glVertex3d(xys[i * 2], xys[i * 2 + 1], 0.0);
+    glEnd();
 }
 
 void ff_drawCircle(double x, double y, double r, int steps) {
@@ -293,4 +310,8 @@ void ff_getColor(double *rgba) {
 
 void ff_setBackgroundColor(double r, double g, double b, double a) {
     glClearColor(r, g, b, a);
+}
+
+void ff_setLineWidth(double lw) {
+    glLineWidth(lw);
 }
