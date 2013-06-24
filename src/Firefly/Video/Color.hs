@@ -61,5 +61,5 @@ white = fromRgb 1 1 1
 
 --------------------------------------------------------------------------------
 black :: Color
-black = fromRgb 1 1 1
+black = fromRgb 0 0 0
 {-# INLINE black #-}

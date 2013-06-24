@@ -153,14 +153,3 @@ Executable firefly-audio
   Build-depends:
     base    >= 4 && < 5,
     firefly
-
-Executable firefly-sketch
-  Hs-source-dirs: examples
-  Main-is:        sketch.hs
-
-  If flag(debug)
-    Cc-options: -DDEBUG -ggdb
-
-  Build-depends:
-    base    >= 4 && < 5,
-    firefly

@@ -10,9 +10,12 @@ module Firefly.Video
     , setShowCursor
     , isShowCursor
 
+    , setSmoothLines
+
     , frame
 
     , drawLine
+    , drawLines
     , drawTriangle
     , drawQuad
     , drawRectangle
@@ -35,6 +38,7 @@ module Firefly.Video
     , setColor
     , getColor
     , setBackgroundColor
+    , setLineWidth
     ) where
 
 
@@ -70,6 +74,8 @@ foreign import ccall unsafe "ff_getFullScreenModes" ff_getFullScreenModes
     :: CInt -> Ptr CInt -> IO CInt
 foreign import ccall unsafe "ff_setShowCursor" ff_setShowCursor :: CInt -> IO ()
 foreign import ccall unsafe "ff_isShowCursor" ff_isShowCursor :: IO CInt
+foreign import ccall unsafe "ff_setSmoothLines" ff_setSmoothLines
+    :: CInt -> IO ()
 foreign import ccall unsafe "ff_startFrame" ff_startFrame :: IO ()
 foreign import ccall unsafe "ff_endFrame" ff_endFrame :: IO ()
 foreign import ccall unsafe "ff_startLine" ff_startLine :: IO ()
@@ -80,6 +86,8 @@ foreign import ccall unsafe "ff_startQuads" ff_startQuads :: IO ()
 foreign import ccall unsafe "ff_endQuads" ff_endQuads :: IO ()
 foreign import ccall unsafe "ff_vertex" ff_vertex
     :: CDouble -> CDouble -> IO ()
+foreign import ccall unsafe "ff_drawLines" ff_drawLines
+    :: Ptr CDouble -> CInt -> IO ()
 foreign import ccall unsafe "ff_drawCircle" ff_drawCircle
     :: CDouble -> CDouble -> CDouble -> CInt -> IO ()
 foreign import ccall unsafe "ff_drawTexture" ff_drawTexture
@@ -106,6 +114,8 @@ foreign import ccall unsafe "ff_getColor" ff_getColor
     :: Ptr CDouble -> IO ()
 foreign import ccall unsafe "ff_setBackgroundColor" ff_setBackgroundColor
     :: CDouble -> CDouble -> CDouble -> CDouble -> IO ()
+foreign import ccall unsafe "ff_setLineWidth" ff_setLineWidth
+    :: CDouble -> IO ()
 
 
 --------------------------------------------------------------------------------
@@ -164,6 +174,12 @@ isShowCursor = toBool <$> ff_isShowCursor
 
 
 --------------------------------------------------------------------------------
+setSmoothLines :: Bool -> IO ()
+setSmoothLines = ff_setSmoothLines . fromBool
+{-# INLINE ff_setSmoothLines #-}
+
+
+--------------------------------------------------------------------------------
 frame :: MonadIO m => m () -> m ()
 frame block = do
     liftIO ff_startFrame
@@ -179,6 +195,17 @@ drawLine vectors = do
     mapM_ vertex vectors
     ff_endLine
 {-# INLINE drawLine #-}
+{-# DEPRECATED drawLine "Use drawLines instead" #-}
+
+
+--------------------------------------------------------------------------------
+drawLines :: [XY] -> IO ()
+drawLines xys = withArray xys' $ \xysptr ->
+    ff_drawLines xysptr (fromIntegral ln)
+  where
+    ln   = length xys
+    xys' = [realToFrac i | XY x' y' <- xys, i <- [x', y']]
+{-# INLINE drawLines #-}
 
 
 --------------------------------------------------------------------------------
@@ -338,3 +365,9 @@ setBackgroundColor :: Color -> IO ()
 setBackgroundColor (Color r g b a) = ff_setBackgroundColor
     (realToFrac r) (realToFrac g) (realToFrac b) (realToFrac a)
 {-# INLINE setBackgroundColor #-}
+
+
+--------------------------------------------------------------------------------
+setLineWidth :: Double -> IO ()
+setLineWidth = ff_setLineWidth . realToFrac
+{-# INLINE setLineWidth #-}
