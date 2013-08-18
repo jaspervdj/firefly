@@ -31,7 +31,7 @@ import           Data.Monoid (Monoid (..))
 data XY = XY
     { x :: {-# UNPACK #-} !Double
     , y :: {-# UNPACK #-} !Double
-    } deriving (Show)
+    } deriving (Eq, Show)
 
 
 --------------------------------------------------------------------------------
